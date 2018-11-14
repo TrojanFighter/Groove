@@ -12,7 +12,7 @@ namespace Mirror
 #if !UNITY_WEBGL || UNITY_EDITOR
 		WebSocketServer Server;
 
-		public static Dictionary<int, string> ConnectionIdToWebSocketId;
+		public static Dictionary<int, string> ConnectionIdToWebSocketId = new Dictionary<int, string>();
 
 		public static int GetMirrorConnectionId(string IdToGet)
 		{
