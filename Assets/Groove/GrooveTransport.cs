@@ -22,20 +22,21 @@ namespace Mirror
 
 		public void ClientConnect(string address, int port)
 		{
-			var d = new System.UriBuilder(address);
-			d.Port = port;
-			d.Scheme = "ws://";
-			d.Path += "game";
-			Debug.Log("attempting to start client on: " + d.ToString());
-			Client = new WebSocketClient(d.Uri);
-			ClientConnectInternal();
+			//var d = new System.UriBuilder(address);
+			//d.Port = port;
+			//d.Scheme = "ws://";
+			//d.Path += "game";
+			//Debug.Log("attempting to start client on: " + d.ToString());
+			//Client = new WebSocketClient(d.Uri);
+			//ClientConnectInternal();
+			ClientCoroutineHostBehaviour.Instance.Connect();
 		}
 
-		public IEnumerator ClientConnectInternal()
-		{
-			yield return Client.Connect();
-			Debug.Log("connected");
-		}
+		//public IEnumerator ClientConnectInternal()
+		//{
+		//	yield return Client.Connect();
+		//	Debug.Log("connected");
+		//}
 
 		public bool ClientConnected()
 		{
@@ -52,36 +53,44 @@ namespace Mirror
 			transportEvent = TransportEvent.Disconnected;
 			data = null;
 
-			var c = Client.Recv();
-			if (c != null)
+			if (ClientCoroutineHostBehaviour.Instance.Client != null)
 			{
-				var PacketString = System.Text.Encoding.UTF8.GetString(c);
-				var Packet = PacketString.Split('|');
-				var EventType = Packet[0];
-				switch (EventType)
+				var c = ClientCoroutineHostBehaviour.Instance.Client.Recv();
+				if (c != null)
 				{
-					case "Connected":
-						transportEvent = TransportEvent.Connected;
-						break;
-					case "Data":
-						transportEvent = TransportEvent.Data;
-						var PacketData = Packet[1];
-						data = System.Text.Encoding.UTF8.GetBytes(PacketData);
-						break;
-					case "Disconnected":
-						transportEvent = TransportEvent.Disconnected;
-						break;
-					default:
-						break;
+					var PacketString = System.Text.Encoding.UTF8.GetString(c);
+					var Packet = PacketString.Split('|');
+					var EventType = Packet[0];
+					switch (EventType)
+					{
+						case "Connected":
+							transportEvent = TransportEvent.Connected;
+							break;
+						case "Data":
+							transportEvent = TransportEvent.Data;
+							var PacketData = Packet[1];
+							data = System.Text.Encoding.UTF8.GetBytes(PacketData);
+							break;
+						case "Disconnected":
+							transportEvent = TransportEvent.Disconnected;
+							break;
+						default:
+							break;
+					}
+					Debug.Log("received transport event: " + transportEvent);
+					Debug.Log("received data: " + data);
+					return true;
 				}
-				Debug.Log("received transport event: " + transportEvent);
-				Debug.Log("received data: " + data);
-				return true;
+				else
+				{
+					return false;
+				}
 			}
 			else
 			{
 				return false;
 			}
+			
 		}
 
 		public bool ClientSend(int channelId, byte[] data)
@@ -91,7 +100,7 @@ namespace Mirror
 
 		public bool GetConnectionInfo(int connectionId, out string address)
 		{
-			throw new System.NotImplementedException();
+			return Server.GetConnectionId(connectionId, out address);
 		}
 
 		public bool ServerActive()
@@ -121,11 +130,27 @@ namespace Mirror
 				connectionId = System.BitConverter.ToInt32(System.Text.Encoding.UTF8.GetBytes(d.ConnectionId), 0);
 				var c = System.Text.Encoding.UTF8.GetString(d.Data);
 				var Packet = c.Split('|');
-				var TransportEvent = Packet[0];
-				var PacketData = Packet[1];
-				data = System.Text.Encoding.UTF8.GetBytes(PacketData);
-				Debug.Log("transport event rcvd: " + TransportEvent);
-				Debug.Log("data received: " + PacketData);
+				var EventType = Packet[0];
+				switch (EventType)
+				{
+					case "Connected":
+						transportEvent = TransportEvent.Connected;
+						var ConnectionPacket = "Connected|brr";
+						ServerSend(connectionId, 0, System.Text.Encoding.UTF8.GetBytes(ConnectionPacket));
+						break;
+					case "Data":
+						transportEvent = TransportEvent.Data;
+						var PacketData = Packet[1];
+						data = System.Text.Encoding.UTF8.GetBytes(PacketData);
+						Debug.Log("data received: " + PacketData);
+						break;
+					case "Disconnected":
+						transportEvent = TransportEvent.Disconnected;
+						break;
+					default:
+						break;
+				}
+				Debug.Log("transport event rcvd: " + transportEvent);
 				return true;
 			}
 #else
@@ -136,7 +161,7 @@ namespace Mirror
 
 		public bool ServerSend(int connectionId, int channelId, byte[] data)
 		{
-			throw new System.NotImplementedException();
+			return Server.Send(connectionId, data);
 		}
 
 		public void ServerStart(string address, int port, int maxConnections)
