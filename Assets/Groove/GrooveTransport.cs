@@ -25,6 +25,7 @@ namespace Mirror
 			var d = new System.UriBuilder(address);
 			d.Port = port;
 			d.Scheme = "ws://";
+			d.Path += "game";
 			Debug.Log("attempting to start client on: " + d.ToString());
 			Client = new WebSocketClient(d.Uri);
 			ClientConnectInternal();

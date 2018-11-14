@@ -8,7 +8,11 @@ namespace Mirror
 {
 	public class MirrorWebSocketBehavior : WebSocketBehavior
 	{
-
+		protected override void OnOpen()
+		{
+			base.OnOpen();
+			Debug.Log("Opened");
+		}
 		protected override void OnMessage(MessageEventArgs e)
 		{
 			Debug.Log("Got Message from: " + ID);

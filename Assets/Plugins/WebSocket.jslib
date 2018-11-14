@@ -93,9 +93,14 @@ SocketSend: function (socketInstance, ptr, length)
 SocketRecvLength: function(socketInstance)
 {
 	var socket = webSocketInstances[socketInstance];
-	if (socket.messages.length == 0)
+	if(socket==null){
 		return 0;
-	return socket.messages[0].length;
+	}
+	else{
+		if (socket.messages.length == 0)
+			return 0;
+		return socket.messages[0].length;
+	}
 },
 
 SocketRecv: function (socketInstance, ptr, length)
