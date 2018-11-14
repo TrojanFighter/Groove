@@ -11,7 +11,7 @@ namespace Mirror
 		protected override void OnOpen()
 		{
 			base.OnOpen();
-			Debug.Log("Opened");
+			Debug.Log("Opened by "+ID);
 		}
 		protected override void OnMessage(MessageEventArgs e)
 		{
