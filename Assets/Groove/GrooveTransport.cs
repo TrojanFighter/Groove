@@ -34,6 +34,7 @@ namespace Mirror
 		public IEnumerator ClientConnectInternal()
 		{
 			yield return Client.Connect();
+			Debug.Log("connected");
 		}
 
 		public bool ClientConnected()
