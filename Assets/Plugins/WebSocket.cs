@@ -9,11 +9,11 @@ using UnityEngine;
 using System.Runtime.InteropServices;
 using WebSocketSharp;
 
-public class WebSocket
+public class WebSocketClient
 {
 	private Uri mUrl;
 
-	public WebSocket(Uri url)
+	public WebSocketClient(Uri url)
 	{
 		mUrl = url;
 		Debug.Log(mUrl);

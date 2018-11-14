@@ -1,151 +1,107 @@
-﻿//using System.Collections;
-//using System.Collections.Generic;
-//using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
-//namespace Mirror
-//{
-//	public class GrooveTransport : TransportLayer
-//	{
-//		WebSocket WsClient;
+namespace Mirror
+{
+	class GrooveTransport : TransportLayer
+	{
+		public WebSocketClient Client;
+		public GrooveWebSocketServer Server = new GrooveWebSocketServer();
 
-//		public bool ClientConnected()
-//		{
-//			return WsClient.m_IsConnected;
-//		}
+		static Queue<WebSocketMessage> Messages = new Queue<WebSocketMessage>();
 
-//		public void ClientConnect(string address, int port)
-//		{
-//			var d = new System.UriBuilder(address);
-//			d.Port = port;
-//			var c = d.Uri;
-//			WsClient = new WebSocket(c);
-//			WsClient.Connect();
-//		}
+		public static void AddMessage(WebSocketMessage msg)
+		{
+			Messages.Enqueue(msg);
+		}
 
-//		public bool ClientSend(int channelId, byte[] data)
-//		{
-//			var d = System.Text.Encoding.UTF8.GetString(data);
-//			var c = "Data|" + d;
-//			WsClient.SendString(c);
-//			return true;
-//		}
+		public void ClientConnect(string address, int port)
+		{
+			throw new System.NotImplementedException();
+		}
 
-//		public bool ClientGetNextMessage(out TransportEvent transportEvent, out byte[] data)
-//		{
-//			var d = WsClient.RecvString();
-//			transportEvent = TransportEvent.Disconnected;
-//			data = null;
+		public bool ClientConnected()
+		{
+			throw new System.NotImplementedException();
+		}
 
-//			if (d != null)
-//			{
-//				var PacketData = d.Split('|');
-//				var TransportType = PacketData[0];
-//				var Data = System.Text.Encoding.UTF8.GetBytes(PacketData[0]);
-//				Debug.Log(TransportType);
-//				Debug.Log(Data);
-//				switch (TransportType)
-//				{
-//					case "Connected":
-//						transportEvent = TransportEvent.Connected;
-//						break;
-//					case "Data":
-//						transportEvent = TransportEvent.Data;
-//						data = Data;
-//						break;
-//					default:
-//						break;
-//				}
-//				return true;
-//			}
-//			return false;
-//		}
+		public void ClientDisconnect()
+		{
+			throw new System.NotImplementedException();
+		}
 
-//		public void ClientDisconnect()
-//		{
-//			WsClient.Close();
-//		}
+		public bool ClientGetNextMessage(out TransportEvent transportEvent, out byte[] data)
+		{
+			throw new System.NotImplementedException();
+		}
 
-//		public bool ServerActive()
-//		{
-//			return WsClient.ServerConnected();
-//		}
+		public bool ClientSend(int channelId, byte[] data)
+		{
+			throw new System.NotImplementedException();
+		}
 
-//		public void ServerStart(string address, int port, int maxConnections)
-//		{
-//			var d = new System.UriBuilder(address);
-//			d.Port = port;
-//			var c = d.Uri;
-//			WsClient.StartServer(c);
-//		}
+		public bool GetConnectionInfo(int connectionId, out string address)
+		{
+			throw new System.NotImplementedException();
+		}
 
-//		public void ServerStartWebsockets(string address, int port, int maxConnections)
-//		{
-//			var d = new System.UriBuilder(address);
-//			d.Port = port;
-//			var c = d.Uri;
-//			WsClient.StartServer(c);
-//		}
+		public bool ServerActive()
+		{
+			throw new System.NotImplementedException();
+		}
 
-//		public bool ServerSend(int connectionId, int channelId, byte[] data)
-//		{
-//			WsClient.ServerSend(connectionId, data);
-//			return true;
-//		}
+		public bool ServerDisconnect(int connectionId)
+		{
+			throw new System.NotImplementedException();
+		}
 
-//		public bool ServerGetNextMessage(out int connectionId, out TransportEvent transportEvent, out byte[] data)
-//		{
-//			var d = WsClient.ServerReceive();
-//			transportEvent = TransportEvent.Disconnected;
-//			data = null;
+		public bool ServerGetNextMessage(out int connectionId, out TransportEvent transportEvent, out byte[] data)
+		{
+			transportEvent = Mirror.TransportEvent.Disconnected;
+			data = null;
+			connectionId = 0;
+			if (Messages.Count == 0) {
+				return false;
+			}
+			else
+			{
+				var d = Messages.Dequeue();
+				Debug.Log(d.ConnectionId);
+				connectionId = System.BitConverter.ToInt32(System.Text.Encoding.UTF8.GetBytes(d.ConnectionId), 0);
+				var c = System.Text.Encoding.UTF8.GetString(d.Data);
+				var Packet = c.Split('|');
+				var TransportEvent = Packet[0];
+				var PacketData = Packet[1];
+				data = System.Text.Encoding.UTF8.GetBytes(PacketData);
+				Debug.Log("transport event rcvd: " + TransportEvent);
+				Debug.Log("data received: " + PacketData);
+				return true;
+			}
+		}
 
-//			if (d != null)
-//			{
-//				var p = System.Text.Encoding.UTF8.GetString(d);
-//				var PacketData = p.Split('|');
-//				var TransportType = PacketData[0];
-//				var Data = System.Text.Encoding.UTF8.GetBytes(PacketData[0]);
-//				Debug.Log(TransportType);
-//				Debug.Log(Data);
-//				switch (TransportType)
-//				{
-//					case "Connected":
-//						transportEvent = TransportEvent.Connected;
-//						break;
-//					case "Data":
-//						transportEvent = TransportEvent.Data;
-//						data = Data;
-//						break;
-//					default:
-//						break;
-//				}
-//				return true;
-//			}
-//			return false;
-//		}
+		public bool ServerSend(int connectionId, int channelId, byte[] data)
+		{
+			throw new System.NotImplementedException();
+		}
 
-//		public bool ServerDisconnect(int connectionId)
-//		{
-//			throw new System.NotImplementedException();
-//		}
+		public void ServerStart(string address, int port, int maxConnections)
+		{
+			Server.StartServer(address, port, maxConnections);
+		}
 
-//		public bool GetConnectionInfo(int connectionId, out string address)
-//		{
-//			address = WsClient.GetConnectionInfo(connectionId);
-//			return true;
-//		}
+		public void ServerStartWebsockets(string address, int port, int maxConnections)
+		{
+			throw new System.NotImplementedException();
+		}
 
-//		public void ServerStop()
-//		{
-//			WsClient.StopServer();
-//		}
+		public void ServerStop()
+		{
+			throw new System.NotImplementedException();
+		}
 
-//		public void Shutdown()
-//		{
-//			if (ServerActive())
-//			{
-//				WsClient.StopServer();
-//			}
-//			WsClient.Close();
-//		}
-//	}
-//}
+		public void Shutdown()
+		{
+			throw new System.NotImplementedException();
+		}
+	}
+}
