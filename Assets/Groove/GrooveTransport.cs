@@ -6,7 +6,6 @@ namespace Mirror
 {
 	class GrooveTransport : TransportLayer
 	{
-		public WebSocketClient Client;
 
 		public bool ClientConnectedLastFrame = false;
 
@@ -106,7 +105,7 @@ namespace Mirror
 
 		public bool ClientSend(int channelId, byte[] data)
 		{
-			Client.Send(data);
+			ClientCoroutineHostBehaviour.Instance.Client.Send(data);
 			return true;
 		}
 
