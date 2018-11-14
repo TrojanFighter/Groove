@@ -147,54 +147,5 @@ public class WebSocket
 		}
 	}
 
-	public void StartServer(Uri uri)
-	{
-		//m_Socket = new WebSocketSharp.WebSocket(uri.ToString());
-
-		//WebSocketSharp.Server.WebSocketServer
-		Debug.Log("starting server on: " + uri);
-		m_Server = new WebSocketSharp.Server.WebSocketServer(uri.ToString());
-		m_Server.AddWebSocketService<SocketBehaviour>("/game");
-		m_Server.Start();
-	}
-
-	public void ServerSend(int ConnectionId, byte[] Data)
-	{
-
-	}
-
-	public void StopServer()
-	{
-		m_Server.Stop();
-	}
-
-	public bool ServerConnected()
-	{
-		return m_Server.IsListening;
-	}
-
-	private List<int> Clients;
 #endif 
-}
-
-public class SocketBehaviour : WebSocketSharp.Server.WebSocketBehavior
-{
-	protected override void OnOpen()
-	{
-		base.OnOpen();
-		Debug.Log("server was opened, whatever that means");
-		var c = Context.UserEndPoint; // can use this to get use info
-	}
-
-	protected override void OnMessage(MessageEventArgs e)
-	{
-		base.OnMessage(e);
-
-	}
-
-	protected override void OnClose(CloseEventArgs e)
-	{
-		base.OnClose(e);
-
-	}
 }
