@@ -13,12 +13,12 @@ namespace Mirror
 #if !UNITY_WEBGL || UNITY_EDITOR
 		public GrooveWebSocketServer Server = new GrooveWebSocketServer();
 
-		static Queue<WebSocketMessage> Messages = new Queue<WebSocketMessage>();
+		static Queue<WebSocketMessage> ServerMessages = new Queue<WebSocketMessage>();
 
 
 		public static void AddMessage(WebSocketMessage msg)
 		{
-			Messages.Enqueue(msg);
+			ServerMessages.Enqueue(msg);
 		}
 #endif
 
@@ -111,7 +111,12 @@ namespace Mirror
 
 		public bool GetConnectionInfo(int connectionId, out string address)
 		{
+#if !UNITY_WEBGL || UNITY_EDITOR
 			return Server.GetConnectionId(connectionId, out address);
+#else
+			address = "";
+			return false;
+#endif
 		}
 
 		public bool ServerActive()
@@ -131,14 +136,14 @@ namespace Mirror
 			data = null;
 			connectionId = 0;
 #if !UNITY_WEBGL || UNITY_EDITOR
-			if (Messages.Count == 0) {
+			if (ServerMessages.Count == 0) {
 				return false;
 			}
 			else
 			{
-				var d = Messages.Dequeue();
+				var d = ServerMessages.Dequeue();
 				Debug.Log(d.ConnectionId);
-				connectionId = System.BitConverter.ToInt32(System.Text.Encoding.UTF8.GetBytes(d.ConnectionId), 0);
+				connectionId = GrooveWebSocketServer.GetMirrorConnectionId(d.ConnectionId);
 				var c = System.Text.Encoding.UTF8.GetString(d.Data);
 				var Packet = c.Split('|');
 				var EventType = Packet[0];
@@ -146,8 +151,7 @@ namespace Mirror
 				{
 					case "Connected":
 						transportEvent = TransportEvent.Connected;
-						var ConnectionPacket = "Connected|brr";
-						ServerSend(connectionId, 0, System.Text.Encoding.UTF8.GetBytes(ConnectionPacket));
+						Debug.Log("processed connected message");
 						break;
 					case "Data":
 						transportEvent = TransportEvent.Data;
@@ -172,7 +176,11 @@ namespace Mirror
 
 		public bool ServerSend(int connectionId, int channelId, byte[] data)
 		{
+#if !UNITY_WEBGL || UNITY_EDITOR
 			return Server.Send(connectionId, data);
+#else
+			return false;
+#endif
 		}
 
 		public void ServerStart(string address, int port, int maxConnections)

@@ -11,7 +11,9 @@ namespace Mirror
 		protected override void OnOpen()
 		{
 			base.OnOpen();
-			GrooveWebSocketServer.AddConnectionId(ID);
+			var connId = GrooveWebSocketServer.AddConnectionId(ID);
+			Debug.Log("conn opened by: " + connId);
+			GrooveTransport.AddMessage(new WebSocketMessage { ConnectionId = ID, Data = System.Text.Encoding.UTF8.GetBytes("Connected|brr") });
 		}
 		protected override void OnMessage(MessageEventArgs e)
 		{

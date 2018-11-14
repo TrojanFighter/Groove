@@ -9,11 +9,15 @@ namespace Mirror
 {
 	public class GrooveWebSocketServer
 	{
-		public static GrooveWebSocketServer Instance { get; private set; }
 #if !UNITY_WEBGL || UNITY_EDITOR
 		WebSocketServer Server;
 
 		public static Dictionary<int, string> ConnectionIdToWebSocketId;
+
+		public static int GetMirrorConnectionId(string IdToGet)
+		{
+			return ConnectionIdToWebSocketId.FirstOrDefault(x => x.Value == IdToGet).Key;
+		}
 
 
 		public void StartServer(string address, int port, int maxConnections)
@@ -50,10 +54,11 @@ namespace Mirror
 			return true;
 		}
 
-		internal static void AddConnectionId(string Id)
+		internal static int AddConnectionId(string Id)
 		{
 			var d = System.BitConverter.ToInt32(System.Text.Encoding.UTF8.GetBytes(Id), 0);
 			ConnectionIdToWebSocketId.Add(d, Id);
+			return d;
 		}
 #else
 		public void StartServer(string address, int port, int maxConnections){
