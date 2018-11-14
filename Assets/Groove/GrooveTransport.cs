@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Mirror
@@ -26,7 +27,12 @@ namespace Mirror
 			d.Scheme = "ws://";
 			Debug.Log("attempting to start client on: " + d.ToString());
 			Client = new WebSocketClient(d.Uri);
-			Client.Connect();
+			ClientConnectInternal();
+		}
+
+		public IEnumerator ClientConnectInternal()
+		{
+			yield return Client.Connect();
 		}
 
 		public bool ClientConnected()
