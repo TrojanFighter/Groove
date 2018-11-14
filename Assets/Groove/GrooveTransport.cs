@@ -106,7 +106,8 @@ namespace Mirror
 
 		public bool ClientSend(int channelId, byte[] data)
 		{
-			throw new System.NotImplementedException();
+			Client.Send(data);
+			return true;
 		}
 
 		public bool GetConnectionInfo(int connectionId, out string address)
