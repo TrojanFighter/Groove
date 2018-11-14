@@ -34,6 +34,11 @@ public class WebSocketClient
 
 	public bool m_IsConnected = false;
 
+	public void ManuallyAddMessage(byte[] Msg)
+	{
+
+	}
+
 #if UNITY_WEBGL && !UNITY_EDITOR
 	[DllImport("__Internal")]
 	private static extern int SocketCreate (string url);

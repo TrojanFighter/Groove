@@ -8,6 +8,8 @@ namespace Mirror
 	{
 		public WebSocketClient Client;
 
+		public bool ClientConnectedLastFrame = false;
+
 #if !UNITY_WEBGL || UNITY_EDITOR
 		public GrooveWebSocketServer Server = new GrooveWebSocketServer();
 
@@ -58,6 +60,15 @@ namespace Mirror
 				var c = ClientCoroutineHostBehaviour.Instance.Client.Recv();
 				if (c != null)
 				{
+					if (!ClientConnectedLastFrame)
+					{
+						ClientConnectedLastFrame = ClientCoroutineHostBehaviour.Instance.SocketConnected;
+						if (ClientConnectedLastFrame)
+						{
+							transportEvent = TransportEvent.Connected;
+							return true;
+						}
+					}
 					var PacketString = System.Text.Encoding.UTF8.GetString(c);
 					var Packet = PacketString.Split('|');
 					var EventType = Packet[0];

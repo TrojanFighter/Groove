@@ -8,6 +8,8 @@ public class ClientCoroutineHostBehaviour : MonoBehaviour {
 
 	public static ClientCoroutineHostBehaviour Instance { get; set; }
 
+	public bool SocketConnected = false;
+
 	private void Start()
 	{
 		if (Instance == null)
@@ -40,7 +42,7 @@ public class ClientCoroutineHostBehaviour : MonoBehaviour {
 		Debug.Log("attempting to start client on: " + d.Uri.ToString());
 		Client = new WebSocketClient(d.Uri);
 		yield return StartCoroutine(Client.Connect());
-		Client.SendString("Connected|brr");
+		SocketConnected = true;
 	}
 	
 }

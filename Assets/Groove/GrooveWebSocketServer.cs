@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 #if !UNITY_WEBGL || UNITY_EDITOR
 using WebSocketSharp.Server;
@@ -8,8 +9,11 @@ namespace Mirror
 {
 	public class GrooveWebSocketServer
 	{
+		public static GrooveWebSocketServer Instance { get; private set; }
 #if !UNITY_WEBGL || UNITY_EDITOR
 		WebSocketServer Server;
+
+		public static Dictionary<int, string> ConnectionIdToWebSocketId;
 
 
 		public void StartServer(string address, int port, int maxConnections)
@@ -26,7 +30,8 @@ namespace Mirror
 		public bool GetConnectionId(int idToGet, out string address)
 		{
 			address = "";
-			var results = Server.WebSocketServices["/game"].Sessions.ActiveIDs.Where(x => System.BitConverter.ToInt32(System.Text.Encoding.UTF8.GetBytes(x), 0) == idToGet);
+			var c = ConnectionIdToWebSocketId[idToGet];
+			var results = Server.WebSocketServices["/game"].Sessions.ActiveIDs.Where(x => x == c);
 			if (results.Any())
 			{
 				address = Server.WebSocketServices["/game"].Sessions.Sessions.Where(x => x.ID == results.First()).First().Context.UserEndPoint.Address.ToString();
@@ -40,7 +45,15 @@ namespace Mirror
 
 		internal bool Send(int connectionId, byte[] data)
 		{
-			
+			var d = ConnectionIdToWebSocketId[connectionId];
+			Server.WebSocketServices["/game"].Sessions.SendTo(data, d);
+			return true;
+		}
+
+		internal static void AddConnectionId(string Id)
+		{
+			var d = System.BitConverter.ToInt32(System.Text.Encoding.UTF8.GetBytes(Id), 0);
+			ConnectionIdToWebSocketId.Add(d, Id);
 		}
 #else
 		public void StartServer(string address, int port, int maxConnections){
