@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#if !UNITY_WEBGL || UNITY_EDITOR
+using System.Collections.Generic;
 using UnityEngine;
 using WebSocketSharp;
 using WebSocketSharp.Server;
@@ -25,3 +26,4 @@ namespace Mirror
 		public byte[] Data;
 	}
 }
+#endif

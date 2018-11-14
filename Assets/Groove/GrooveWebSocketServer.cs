@@ -1,11 +1,15 @@
 ﻿using UnityEngine;
+#if !UNITY_WEBGL || UNITY_EDITOR
 using WebSocketSharp.Server;
+#endif
 
 namespace Mirror
 {
 	public class GrooveWebSocketServer
 	{
+#if !UNITY_WEBGL || UNITY_EDITOR
 		WebSocketServer Server;
+
 
 		public void StartServer(string address, int port, int maxConnections)
 		{
@@ -17,6 +21,12 @@ namespace Mirror
 			Server.AddWebSocketService<MirrorWebSocketBehavior>("/game");
 			Server.Start();
 		}
+#else
+		public void StartServer(string address, int port, int maxConnections){
+			Debug.LogError("can't start server in WebGL");
+		}
+#endif
+
 
 	}
 }
