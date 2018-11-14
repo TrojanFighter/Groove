@@ -42,7 +42,7 @@ namespace Mirror
 
 		public bool ClientConnected()
 		{
-			throw new System.NotImplementedException();
+			return ClientCoroutineHostBehaviour.Instance.SocketConnected;
 		}
 
 		public void ClientDisconnect()
@@ -57,18 +57,18 @@ namespace Mirror
 
 			if (ClientCoroutineHostBehaviour.Instance.Client != null)
 			{
+				if (!ClientConnectedLastFrame)
+				{
+					ClientConnectedLastFrame = ClientCoroutineHostBehaviour.Instance.SocketConnected;
+					if (ClientConnectedLastFrame)
+					{
+						transportEvent = TransportEvent.Connected;
+						return true;
+					}
+				}
 				var c = ClientCoroutineHostBehaviour.Instance.Client.Recv();
 				if (c != null)
-				{
-					if (!ClientConnectedLastFrame)
-					{
-						ClientConnectedLastFrame = ClientCoroutineHostBehaviour.Instance.SocketConnected;
-						if (ClientConnectedLastFrame)
-						{
-							transportEvent = TransportEvent.Connected;
-							return true;
-						}
-					}
+				{	
 					var PacketString = System.Text.Encoding.UTF8.GetString(c);
 					var Packet = PacketString.Split('|');
 					var EventType = Packet[0];
