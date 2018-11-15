@@ -105,7 +105,13 @@ namespace Mirror
 
 		public bool ClientSend(int channelId, byte[] data)
 		{
-			ClientCoroutineHostBehaviour.Instance.Client.Send(data);
+			byte[] DataPacketPrefix = System.Text.Encoding.UTF8.GetBytes("Data|");
+			byte[] FinalPacket = new byte[DataPacketPrefix.Length + data.Length];
+			System.Buffer.BlockCopy(DataPacketPrefix, 0, FinalPacket, 0, DataPacketPrefix.Length);
+			System.Buffer.BlockCopy(data, 0, FinalPacket, DataPacketPrefix.Length, data.Length);
+			Debug.Log("Sending data: ");
+			Debug.Log(System.Text.Encoding.UTF8.GetString(FinalPacket));
+			ClientCoroutineHostBehaviour.Instance.Client.Send(FinalPacket);
 			return true;
 		}
 
@@ -121,12 +127,20 @@ namespace Mirror
 
 		public bool ServerActive()
 		{
-			throw new System.NotImplementedException();
+#if !UNITY_WEBGL || UNITY_EDITOR
+			return Server.ServerActive;
+			#else
+			return false;
+#endif
 		}
 
 		public bool ServerDisconnect(int connectionId)
 		{
-			throw new System.NotImplementedException();
+#if !UNITY_WEBGL || UNITY_EDITOR
+			return GrooveWebSocketServer.RemoveConnectionId(connectionId);
+#else
+			return false;
+#endif
 		}
 
 		public bool ServerGetNextMessage(out int connectionId, out TransportEvent transportEvent, out byte[] data)
@@ -169,7 +183,7 @@ namespace Mirror
 				return true;
 			}
 #else
-			Debug.LogError("bad");
+			Debug.LogError("DoN't StArT tHe SeRvEr On WeBgL");
 			return false;
 #endif
 		}
@@ -177,7 +191,13 @@ namespace Mirror
 		public bool ServerSend(int connectionId, int channelId, byte[] data)
 		{
 #if !UNITY_WEBGL || UNITY_EDITOR
-			return Server.Send(connectionId, data);
+			byte[] DataPacketPrefix = System.Text.Encoding.UTF8.GetBytes("Data|");
+			byte[] FinalPacket = new byte[DataPacketPrefix.Length + data.Length];
+			System.Buffer.BlockCopy(DataPacketPrefix, 0, FinalPacket, 0, DataPacketPrefix.Length);
+			System.Buffer.BlockCopy(data, 0, FinalPacket, DataPacketPrefix.Length, data.Length);
+			Debug.Log("Sending data: ");
+			Debug.Log(System.Text.Encoding.UTF8.GetString(FinalPacket));
+			return Server.Send(connectionId, FinalPacket);
 #else
 			return false;
 #endif

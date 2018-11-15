@@ -14,9 +14,28 @@ namespace Mirror
 
 		public static Dictionary<int, string> ConnectionIdToWebSocketId = new Dictionary<int, string>();
 
+		public bool ServerActive { get
+			{
+				return Server.IsListening;
+			} }
+
 		public static int GetMirrorConnectionId(string IdToGet)
 		{
 			return ConnectionIdToWebSocketId.FirstOrDefault(x => x.Value == IdToGet).Key;
+		}
+
+		public static bool RemoveConnectionId(int IdToRemove)
+		{
+			string WebSocketId;
+			if(ConnectionIdToWebSocketId.TryGetValue(IdToRemove, out WebSocketId))
+			{
+				ConnectionIdToWebSocketId.Remove(IdToRemove);
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 
 
