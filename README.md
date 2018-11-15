@@ -4,7 +4,7 @@ A WebSockets transport layer for Mirror. In case you've made your way here, this
 
 ## Features
 
-* Run a Mirror client (including WebGL) and server (not using WebGL) using WebSockets
+* Run a Mirror client (including WebGL) and server (on Windows, macOS or Linux) using WebSockets
 * Use the power of Mirror to develop your game while being able to support the extreme reach of the WebGL target
 
 ## Downloads
