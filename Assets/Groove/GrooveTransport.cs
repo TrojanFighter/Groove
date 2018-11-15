@@ -172,7 +172,7 @@ namespace Mirror
 				{
 					case "Connected":
 						transportEvent = TransportEvent.Connected;
-						Debug.Log("processed connected message");
+						//Debug.Log("processed connected message");
 						break;
 					case "Data":
 						transportEvent = TransportEvent.Data;
@@ -180,7 +180,7 @@ namespace Mirror
 						{
 							var PacketData = Packet[1];
 							data = System.Text.Encoding.UTF8.GetBytes(PacketData);
-							Debug.Log("data received: " + PacketData);
+							//Debug.Log("data received: " + PacketData);
 						}
 						else
 						{
@@ -193,7 +193,7 @@ namespace Mirror
 					default:
 						break;
 				}
-				Debug.Log("transport event rcvd: " + transportEvent);
+				//Debug.Log("transport event rcvd: " + transportEvent);
 				return true;
 			}
 #else
@@ -209,8 +209,8 @@ namespace Mirror
 			byte[] FinalPacket = new byte[DataPacketPrefix.Length + data.Length];
 			System.Buffer.BlockCopy(DataPacketPrefix, 0, FinalPacket, 0, DataPacketPrefix.Length);
 			System.Buffer.BlockCopy(data, 0, FinalPacket, DataPacketPrefix.Length, data.Length);
-			Debug.Log("Sending data: ");
-			Debug.Log(System.Text.Encoding.UTF8.GetString(FinalPacket));
+			//Debug.Log("Sending data: ");
+			//Debug.Log(System.Text.Encoding.UTF8.GetString(FinalPacket));
 			return Server.Send(connectionId, FinalPacket);
 #else
 			return false;
