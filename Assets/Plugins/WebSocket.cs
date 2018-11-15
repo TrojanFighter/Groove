@@ -115,7 +115,7 @@ public class WebSocketClient
 	public IEnumerator Connect()
 	{
 		m_Socket = new WebSocketSharp.WebSocket(mUrl.ToString());
-		m_Socket.OnMessage += (sender, e) => m_Messages.Enqueue (e.RawData);
+		m_Socket.OnMessage += (sender, e) => { lock (m_Messages) { m_Messages.Enqueue(e.RawData); } };
 		m_Socket.OnOpen += (sender, e) => m_IsConnected = true;
 		m_Socket.OnError += (sender, e) => m_Error = e.Message;
 		m_Socket.ConnectAsync();
@@ -130,9 +130,12 @@ public class WebSocketClient
 
 	public byte[] Recv()
 	{
-		if (m_Messages.Count == 0)
-			return null;
-		return m_Messages.Dequeue();
+		lock (m_Messages)
+		{
+			if (m_Messages.Count == 0)
+				return null;
+			return m_Messages.Dequeue();
+		}
 	}
 
 	public void Close()

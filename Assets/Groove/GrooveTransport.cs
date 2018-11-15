@@ -78,8 +78,15 @@ namespace Mirror
 							break;
 						case "Data":
 							transportEvent = TransportEvent.Data;
-							var PacketData = Packet[1];
-							data = System.Text.Encoding.UTF8.GetBytes(PacketData);
+							if (Packet.Length > 0)
+							{
+								var PacketData = Packet[1];
+								data = System.Text.Encoding.UTF8.GetBytes(PacketData);
+							}
+							else
+							{
+								data = null;
+							}
 							break;
 						case "Disconnected":
 							transportEvent = TransportEvent.Disconnected;
@@ -169,9 +176,16 @@ namespace Mirror
 						break;
 					case "Data":
 						transportEvent = TransportEvent.Data;
-						var PacketData = Packet[1];
-						data = System.Text.Encoding.UTF8.GetBytes(PacketData);
-						Debug.Log("data received: " + PacketData);
+						if (Packet.Length > 0)
+						{
+							var PacketData = Packet[1];
+							data = System.Text.Encoding.UTF8.GetBytes(PacketData);
+							Debug.Log("data received: " + PacketData);
+						}
+						else
+						{
+							data = null;
+						}
 						break;
 					case "Disconnected":
 						transportEvent = TransportEvent.Disconnected;
