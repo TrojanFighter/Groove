@@ -25,6 +25,7 @@ GameObject:
   - component: {fileID: 114759107791244226}
   - component: {fileID: 114800546469636160}
   - component: {fileID: 114107282239430564}
+  - component: {fileID: 114328862307542880}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -100,6 +101,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Controller: {fileID: 143638447868201070}
   Speed: 5
+--- !u!114 &114328862307542880
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1323530346147048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1510866737, guid: 16d2ab6ef1bfe324fa0f7da64cb2275c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_TransformSyncMode: 4
+  m_SendInterval: 0.033333335
+  m_SyncRotationAxis: 0
+  m_RotationSyncCompression: 2
+  m_SyncSpin: 0
+  m_MovementTheshold: 0.001
+  m_VelocityThreshold: 0.0001
+  m_SnapThreshold: 5
+  m_InterpolateRotation: 1
+  m_InterpolateMovement: 1
 --- !u!114 &114759107791244226
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -82,6 +82,7 @@ namespace Mirror
 							{
 								var PacketData = Packet[1];
 								data = System.Text.Encoding.UTF8.GetBytes(PacketData);
+								Debug.Log("received data: " + PacketData);
 							}
 							else
 							{
@@ -94,8 +95,8 @@ namespace Mirror
 						default:
 							break;
 					}
-					Debug.Log("received transport event: " + transportEvent);
-					Debug.Log("received data: " + data);
+					//Debug.Log("received transport event: " + transportEvent);
+					//Debug.Log("received data: " + data);
 					return true;
 				}
 				else
@@ -112,13 +113,11 @@ namespace Mirror
 
 		public bool ClientSend(int channelId, byte[] data)
 		{
-			byte[] DataPacketPrefix = System.Text.Encoding.UTF8.GetBytes("Data|");
-			byte[] FinalPacket = new byte[DataPacketPrefix.Length + data.Length];
-			System.Buffer.BlockCopy(DataPacketPrefix, 0, FinalPacket, 0, DataPacketPrefix.Length);
-			System.Buffer.BlockCopy(data, 0, FinalPacket, DataPacketPrefix.Length, data.Length);
-			Debug.Log("Sending data: ");
-			Debug.Log(System.Text.Encoding.UTF8.GetString(FinalPacket));
-			ClientCoroutineHostBehaviour.Instance.Client.Send(FinalPacket);
+			var PacketPrefix = "Data|";
+			var PacketData = System.Text.Encoding.UTF8.GetString(data);
+			var FinalPacket = PacketPrefix + PacketData;
+			var FinalPacketInBytes = System.Text.Encoding.UTF8.GetBytes(FinalPacket);
+			ClientCoroutineHostBehaviour.Instance.Client.Send(FinalPacketInBytes);
 			return true;
 		}
 
@@ -205,13 +204,18 @@ namespace Mirror
 		public bool ServerSend(int connectionId, int channelId, byte[] data)
 		{
 #if !UNITY_WEBGL || UNITY_EDITOR
-			byte[] DataPacketPrefix = System.Text.Encoding.UTF8.GetBytes("Data|");
-			byte[] FinalPacket = new byte[DataPacketPrefix.Length + data.Length];
-			System.Buffer.BlockCopy(DataPacketPrefix, 0, FinalPacket, 0, DataPacketPrefix.Length);
-			System.Buffer.BlockCopy(data, 0, FinalPacket, DataPacketPrefix.Length, data.Length);
+			//byte[] DataPacketPrefix = System.Text.Encoding.UTF8.GetBytes("Data|");
+			//byte[] FinalPacket = new byte[DataPacketPrefix.Length + data.Length];
+			//System.Buffer.BlockCopy(DataPacketPrefix, 0, FinalPacket, 0, DataPacketPrefix.Length);
+			//System.Buffer.BlockCopy(data, 0, FinalPacket, DataPacketPrefix.Length, data.Length);
+
+			var PacketPrefix = "Data|";
+			var PacketData = System.Text.Encoding.UTF8.GetString(data);
+			var FinalPacket = PacketPrefix + PacketData;
+			var FinalPacketInBytes = System.Text.Encoding.UTF8.GetBytes(FinalPacket);
 			//Debug.Log("Sending data: ");
 			//Debug.Log(System.Text.Encoding.UTF8.GetString(FinalPacket));
-			return Server.Send(connectionId, FinalPacket);
+			return Server.Send(connectionId, FinalPacketInBytes);
 #else
 			return false;
 #endif

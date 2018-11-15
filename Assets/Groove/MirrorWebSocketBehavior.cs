@@ -25,6 +25,12 @@ namespace Mirror
 				Data = e.RawData
 			});
 		}
+
+		protected override void OnClose(CloseEventArgs e)
+		{
+			base.OnClose(e);
+			Mirror.Transport.layer.ServerDisconnect(GrooveWebSocketServer.GetMirrorConnectionId(ID));
+		}
 	}
 
 	public class WebSocketMessage
