@@ -23,21 +23,8 @@ namespace Mirror
 
 		public void ClientConnect(string address, int port)
 		{
-			//var d = new System.UriBuilder(address);
-			//d.Port = port;
-			//d.Scheme = "ws://";
-			//d.Path += "game";
-			//Debug.Log("attempting to start client on: " + d.ToString());
-			//Client = new WebSocketClient(d.Uri);
-			//ClientConnectInternal();
 			ClientCoroutineHostBehaviour.Instance.Connect();
 		}
-
-		//public IEnumerator ClientConnectInternal()
-		//{
-		//	yield return Client.Connect();
-		//	Debug.Log("connected");
-		//}
 
 		public bool ClientConnected()
 		{
@@ -46,7 +33,7 @@ namespace Mirror
 
 		public void ClientDisconnect()
 		{
-			throw new System.NotImplementedException();
+			ClientCoroutineHostBehaviour.Instance.Disconnect();
 		}
 
 		public bool ClientGetNextMessage(out TransportEvent transportEvent, out byte[] data)
@@ -193,12 +180,17 @@ namespace Mirror
 
 		public void ServerStop()
 		{
-			throw new System.NotImplementedException();
+#if !UNITY_WEBGL || UNITY_EDITOR
+			Server.StopServer();
+#endif
 		}
 
 		public void Shutdown()
 		{
-			throw new System.NotImplementedException();
+			ClientCoroutineHostBehaviour.Instance.Disconnect();
+#if !UNITY_WEBGL || UNITY_EDITOR
+			Server.StopServer();
+#endif
 		}
 	}
 }

@@ -44,5 +44,11 @@ public class ClientCoroutineHostBehaviour : MonoBehaviour {
 		yield return StartCoroutine(Client.Connect());
 		SocketConnected = true;
 	}
+
+	public void Disconnect()
+	{
+		Client.Close();
+		SocketConnected = false;
+	}
 	
 }

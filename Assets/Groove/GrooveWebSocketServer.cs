@@ -38,6 +38,12 @@ namespace Mirror
 			}
 		}
 
+		public void StopServer()
+		{
+			Server.Stop();
+			ConnectionIdToWebSocketId = new Dictionary<int, string>();
+		}
+
 
 		public void StartServer(string address, int port, int maxConnections)
 		{
