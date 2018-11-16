@@ -7,6 +7,14 @@ A WebSockets transport layer for Mirror. WebGL is fully supported (for Mirror cl
 * Run a Mirror client (including WebGL) and server (on Windows, macOS or Linux) using WebSockets
 * Use the power of Mirror to develop your game while being able to support the extreme reach of the WebGL target
 
+## Installation & Using Instructions
+
+* Download the current version package from this page.
+* Import Mirror into your project using your favorite method (Asset Store, package, or building from source).
+* Import the current version package you downloaded from this page.
+* Once Unity compiles, add the "ClientCoroutineHostBehaviour" to a GameObject in the first scene the client loads.
+* Override the Mirror transport layer to use Groove (see Considerations below). You're done.
+
 ## Downloads
 
 * Current version (0.8)
