@@ -1,6 +1,6 @@
 # Groove
 
-A WebSockets transport layer for Mirror. In case you've made your way here, this project is in development and is not fully implemented yet.
+A WebSockets transport layer for Mirror. WebGL is fully supported (for Mirror clients). Please try to break it.
 
 ## Features
 
@@ -9,7 +9,7 @@ A WebSockets transport layer for Mirror. In case you've made your way here, this
 
 ## Downloads
 
-* Current version (0.5)
+* Current version (0.8)
 
 ## Considerations
 

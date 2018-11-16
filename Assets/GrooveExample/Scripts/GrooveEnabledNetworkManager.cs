@@ -1,5 +1,4 @@
 ﻿using Mirror;
-using UnityEngine;
 
 public class GrooveEnabledNetworkManager : NetworkManager {
 	public static GrooveEnabledNetworkManager Instance { get; private set; }
@@ -11,15 +10,9 @@ public class GrooveEnabledNetworkManager : NetworkManager {
 
 	public override void InitializeTransport()
 	{
+		// Use this if you are smart:
 		Transport.layer = new GrooveTransport();
+		// Use this if you want to go insane:
 		//Transport.layer = new LLAPITransport();
-	}
-
-	public override void OnServerAddPlayer(NetworkConnection conn, NetworkReader extraMessageReader)
-	{
-		base.OnServerAddPlayer(conn, extraMessageReader);
-		var c = GameObject.Find("Player(Clone)");
-		var d = c.GetComponent<NetworkIdentity>();
-		Debug.Log(d.assetId);
 	}
 }

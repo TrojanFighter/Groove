@@ -50,7 +50,10 @@ namespace Mirror
 			var d = new System.UriBuilder(address);
 			d.Port = port;
 			d.Scheme = "ws://";
-			Debug.Log("attempting to start server on: " + d.Uri.ToString());
+			if (Mirror.LogFilter.Debug)
+			{
+				Debug.Log("attempting to start WebSocket server on: " + d.Uri.ToString());
+			}
 			Server = new WebSocketServer(d.Uri.ToString());
 			Server.AddWebSocketService<MirrorWebSocketBehavior>("/game");
 			Server.Start();
