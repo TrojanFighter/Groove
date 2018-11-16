@@ -541,7 +541,7 @@ MonoBehaviour:
   m_OnlineScene: 
   m_SpawnPrefabs: []
   m_MaxConnections: 4
-  m_UseWebSockets: 0
+  m_UseWebSockets: 1
   isNetworkActive: 0
 --- !u!4 &1056211496
 Transform:
@@ -952,6 +952,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b11fb5e09d2e8324697fd106ba346bfa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SocketConnected: 0
 --- !u!4 &1762457294
 Transform:
   m_ObjectHideFlags: 0

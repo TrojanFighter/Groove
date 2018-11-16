@@ -11,10 +11,9 @@ namespace Mirror
 		protected override void OnOpen()
 		{
 			base.OnOpen();
-			Debug.Log("conn opened by: " + ID);
 			var connId = GrooveWebSocketServer.AddConnectionId(ID);
 			Debug.Log("conn opened by: " + connId);
-			GrooveTransport.AddMessage(new WebSocketMessage { ConnectionId = ID, Data = System.Text.Encoding.UTF8.GetBytes("Connected|brr") });
+			GrooveTransport.AddMessage(new WebSocketMessage { ConnectionId = ID, Type = TransportEvent.Connected, Data = null });
 		}
 		protected override void OnMessage(MessageEventArgs e)
 		{
@@ -22,6 +21,7 @@ namespace Mirror
 			GrooveTransport.AddMessage(new WebSocketMessage
 			{
 				ConnectionId = this.ID,
+				Type = TransportEvent.Data,
 				Data = e.RawData
 			});
 		}
@@ -29,13 +29,14 @@ namespace Mirror
 		protected override void OnClose(CloseEventArgs e)
 		{
 			base.OnClose(e);
-			Mirror.Transport.layer.ServerDisconnect(GrooveWebSocketServer.GetMirrorConnectionId(ID));
+			GrooveTransport.AddMessage(new WebSocketMessage { ConnectionId = ID, Type = TransportEvent.Disconnected, Data = null });
 		}
 	}
 
 	public class WebSocketMessage
 	{
 		public string ConnectionId;
+		public TransportEvent Type;
 		public byte[] Data;
 	}
 }

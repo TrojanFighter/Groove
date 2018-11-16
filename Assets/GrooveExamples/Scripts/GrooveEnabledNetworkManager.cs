@@ -12,6 +12,7 @@ public class GrooveEnabledNetworkManager : NetworkManager {
 	public override void InitializeTransport()
 	{
 		Transport.layer = new GrooveTransport();
+		//Transport.layer = new LLAPITransport();
 	}
 
 	public override void OnServerAddPlayer(NetworkConnection conn, NetworkReader extraMessageReader)
