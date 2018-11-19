@@ -48,7 +48,7 @@ public class ClientCoroutineHostBehaviour : MonoBehaviour {
 		}
 		else
 		{
-			d.Scheme = "ws://"
+			d.Scheme = "ws://";
 		}
 		d.Path += "game";
 		Debug.Log("attempting to start client on: " + d.Uri.ToString());
