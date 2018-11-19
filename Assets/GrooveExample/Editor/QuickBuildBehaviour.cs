@@ -4,7 +4,7 @@ namespace Spectrum
 {
 	public class SpectrumQuickBuild
 	{
-		public static string ExampleRoot = "Assets/GrooveExamples";
+		public static string ExampleRoot = "Assets/GrooveExample";
 
 		public static BuildTarget TargetPlatform;
 

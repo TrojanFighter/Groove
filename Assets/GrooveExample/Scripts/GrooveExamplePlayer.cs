@@ -5,6 +5,9 @@ using Mirror;
 
 public class GrooveExamplePlayer : NetworkBehaviour {
 
+	[SyncVar]
+	public string Id;
+
 	[SyncVar(hook ="HealthChanged")]
 	public int Health;
 
@@ -19,6 +22,12 @@ public class GrooveExamplePlayer : NetworkBehaviour {
 				item.enabled = false;
 			}
 		}
+	}
+
+	public override void OnStartServer()
+	{
+		base.OnStartServer();
+		Id = System.Guid.NewGuid().ToString();
 	}
 
 	public void HealthChanged(int Health)
