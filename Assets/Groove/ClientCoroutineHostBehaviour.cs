@@ -10,6 +10,9 @@ public class ClientCoroutineHostBehaviour : MonoBehaviour {
 
 	public bool SocketConnected = false;
 
+	[SerializeField]
+	private bool UseSecureClient = false;
+
 	private void Start()
 	{
 		if (Instance == null)
@@ -35,9 +38,18 @@ public class ClientCoroutineHostBehaviour : MonoBehaviour {
 		Debug.Log("started connectInternal");
 		var address = "10.1.10.65";
 		var port = 7777;
-		var d = new System.UriBuilder(address);
-		d.Port = port;
-		d.Scheme = "ws://";
+		var d = new System.UriBuilder(address)
+		{
+			Port = port
+		};
+		if (UseSecureClient)
+		{
+			d.Scheme = "wss://";
+		}
+		else
+		{
+			d.Scheme = "ws://"
+		}
 		d.Path += "game";
 		Debug.Log("attempting to start client on: " + d.Uri.ToString());
 		Client = new WebSocketClient(d.Uri);

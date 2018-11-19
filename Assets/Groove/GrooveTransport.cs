@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Mirror
 {
-	class GrooveTransport : TransportLayer
+	public class GrooveTransport : TransportLayer
 	{
 
 		public bool ClientConnectedLastFrame = false;
@@ -163,6 +163,7 @@ namespace Mirror
 		public void ServerStart(string address, int port, int maxConnections)
 		{
 #if !UNITY_WEBGL || UNITY_EDITOR
+			Debug.Log("address: " + address);
 			Server.StartServer(address, port, maxConnections);
 #else
 			Debug.LogError("DoN't StArT tHe SeRvEr On WeBgL");
@@ -172,6 +173,7 @@ namespace Mirror
 		public void ServerStartWebsockets(string address, int port, int maxConnections)
 		{
 #if !UNITY_WEBGL || UNITY_EDITOR
+			Debug.Log("address: " + address);
 			Server.StartServer(address, port, maxConnections);
 #else
 			Debug.LogError("DoN't StArT tHe SeRvEr On WeBgL");

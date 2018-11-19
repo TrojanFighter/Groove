@@ -14,10 +14,21 @@ namespace Mirror
 
 		public static Dictionary<int, string> ConnectionIdToWebSocketId = new Dictionary<int, string>();
 
+		public static int MaxConnections { get; private set; }
+
 		public bool ServerActive { get
 			{
 				return Server.IsListening;
 			} }
+
+		private readonly bool UseSecureServer = false;
+		private string PathToCertificate;
+		private readonly string CertificatePassword = "FillMeOutPlease";
+
+		public GrooveWebSocketServer()
+		{
+			PathToCertificate = Application.dataPath + "/../certificate.pfx";
+		}
 
 		public static int GetMirrorConnectionId(string IdToGet)
 		{
@@ -47,16 +58,34 @@ namespace Mirror
 
 		public void StartServer(string address, int port, int maxConnections)
 		{
-			var d = new System.UriBuilder(address);
-			d.Port = port;
-			d.Scheme = "ws://";
+# if !UNITY_WEBGL || UNITY_EDITOR
+			var d = new System.UriBuilder(address)
+			{
+				Port = port
+			};
+			if (UseSecureServer)
+			{
+				d.Scheme = "wss://";
+			}
+			else
+			{
+				d.Scheme = "ws://";
+			}
 			if (Mirror.LogFilter.Debug)
 			{
 				Debug.Log("attempting to start WebSocket server on: " + d.Uri.ToString());
 			}
+			MaxConnections = maxConnections;
 			Server = new WebSocketServer(d.Uri.ToString());
 			Server.AddWebSocketService<MirrorWebSocketBehavior>("/game");
+			if (UseSecureServer)
+			{
+				Server.SslConfiguration.ServerCertificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(PathToCertificate, CertificatePassword);
+			}
 			Server.Start();
+#else
+			Debug.Log("don't start the server on webgl please");
+#endif
 		}
 
 		public bool GetConnectionId(int idToGet, out string address)
@@ -82,11 +111,19 @@ namespace Mirror
 			return true;
 		}
 
-		internal static int AddConnectionId(string Id)
+		internal static bool AddConnectionId(string Id, out int ConnectionId)
 		{
-			var d = System.BitConverter.ToInt32(System.Text.Encoding.UTF8.GetBytes(Id), 0);
-			ConnectionIdToWebSocketId.Add(d, Id);
-			return d;
+			if (ConnectionIdToWebSocketId.Count < MaxConnections)
+			{
+				ConnectionId = System.BitConverter.ToInt32(System.Text.Encoding.UTF8.GetBytes(Id), 0);
+				ConnectionIdToWebSocketId.Add(ConnectionId, Id);
+				return true;
+			}
+			else
+			{
+				ConnectionId = 0;
+				return false;
+			}
 		}
 #else
 		public void StartServer(string address, int port, int maxConnections){
@@ -95,5 +132,5 @@ namespace Mirror
 #endif
 
 
-	}
+		}
 }
