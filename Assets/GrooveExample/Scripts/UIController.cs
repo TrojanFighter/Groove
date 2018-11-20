@@ -1,20 +1,22 @@
 ﻿using UnityEngine;
 
-class UIController : MonoBehaviour
+namespace GrooveExample
 {
-	[SerializeField]
-	private GameObject ConnectionPanelContainer;
-
-	public void StartServer()
+	class UIController : MonoBehaviour
 	{
-		GrooveEnabledNetworkManager.Instance.StartServer();
-		ConnectionPanelContainer.SetActive(false);
-	}
+		[SerializeField]
+		private GameObject ConnectionPanelContainer;
 
-	public void StartClient()
-	{
-		GrooveEnabledNetworkManager.Instance.StartClient();
-		ConnectionPanelContainer.SetActive(false);
+		public void StartServer()
+		{
+			GrooveEnabledNetworkManager.Instance.StartServer();
+			ConnectionPanelContainer.SetActive(false);
+		}
+
+		public void StartClient()
+		{
+			GrooveEnabledNetworkManager.Instance.StartClient();
+			ConnectionPanelContainer.SetActive(false);
+		}
 	}
 }
-

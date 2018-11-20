@@ -1,18 +1,22 @@
 ﻿using Mirror;
 
-public class GrooveEnabledNetworkManager : NetworkManager {
-	public static GrooveEnabledNetworkManager Instance { get; private set; }
-
-	private void Start()
+namespace GrooveExample
+{
+	public class GrooveEnabledNetworkManager : NetworkManager
 	{
-		Instance = this;
-	}
+		public static GrooveEnabledNetworkManager Instance { get; private set; }
 
-	public override void InitializeTransport()
-	{
-		// Use this if you are smart:
-		Transport.layer = new GrooveTransport();
-		// Use this if you want to go insane:
-		//Transport.layer = new LLAPITransport();
+		private void Start()
+		{
+			Instance = this;
+		}
+
+		public override void InitializeTransport()
+		{
+			// Use this if you are smart:
+			Transport.layer = new GrooveTransport();
+			// Use this if you want to go insane:
+			//Transport.layer = new LLAPITransport();
+		}
 	}
 }

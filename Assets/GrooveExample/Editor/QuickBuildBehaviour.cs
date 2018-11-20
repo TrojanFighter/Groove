@@ -2,7 +2,7 @@
 
 namespace Spectrum
 {
-	public class SpectrumQuickBuild
+	public class GrooveExample
 	{
 		public static string ExampleRoot = "Assets/GrooveExample";
 
@@ -60,12 +60,12 @@ namespace Spectrum
 
 		public static string GetPath()
 		{
-			var prevPath = EditorPrefs.GetString("spectrum.buildPath", "");
+			var prevPath = EditorPrefs.GetString("groove.buildPath", "");
 			string path = EditorUtility.SaveFolderPanel("Choose Location for binaries", prevPath, "");
 
 			if (!string.IsNullOrEmpty(path))
 			{
-				EditorPrefs.SetString("spectrum.buildPath", path);
+				EditorPrefs.SetString("groove.buildPath", path);
 			}
 			return path;
 		}

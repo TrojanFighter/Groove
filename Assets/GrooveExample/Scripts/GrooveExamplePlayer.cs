@@ -3,35 +3,39 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
-public class GrooveExamplePlayer : NetworkBehaviour {
-
-	[SyncVar]
-	public string Id;
-
-	[SyncVar(hook ="HealthChanged")]
-	public int Health;
-
-	public List<Behaviour> ComponentsToDisableOnRemote;
-
-	private void Start()
+namespace GrooveExample
+{
+	public class GrooveExamplePlayer : NetworkBehaviour
 	{
-		if (!isLocalPlayer)
+
+		[SyncVar]
+		public string Id;
+
+		[SyncVar(hook = "HealthChanged")]
+		public int Health;
+
+		public List<Behaviour> ComponentsToDisableOnRemote;
+
+		private void Start()
 		{
-			foreach (var item in ComponentsToDisableOnRemote)
+			if (!isLocalPlayer)
 			{
-				item.enabled = false;
+				foreach (var item in ComponentsToDisableOnRemote)
+				{
+					item.enabled = false;
+				}
 			}
 		}
-	}
 
-	public override void OnStartServer()
-	{
-		base.OnStartServer();
-		Id = System.Guid.NewGuid().ToString();
-	}
+		public override void OnStartServer()
+		{
+			base.OnStartServer();
+			Id = System.Guid.NewGuid().ToString();
+		}
 
-	public void HealthChanged(int Health)
-	{
-		Debug.Log("new health: " + Health);
+		public void HealthChanged(int Health)
+		{
+			Debug.Log("new health: " + Health);
+		}
 	}
 }
