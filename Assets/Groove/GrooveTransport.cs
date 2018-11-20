@@ -23,7 +23,7 @@ namespace Mirror
 
 		public void ClientConnect(string address, int port)
 		{
-			ClientCoroutineHostBehaviour.Instance.Connect();
+			ClientCoroutineHostBehaviour.Instance.Connect(address, port);
 		}
 
 		public bool ClientConnected()
@@ -163,7 +163,6 @@ namespace Mirror
 		public void ServerStart(string address, int port, int maxConnections)
 		{
 #if !UNITY_WEBGL || UNITY_EDITOR
-			Debug.Log("address: " + address);
 			Server.StartServer(address, port, maxConnections);
 #else
 			Debug.LogError("DoN't StArT tHe SeRvEr On WeBgL");
@@ -173,7 +172,6 @@ namespace Mirror
 		public void ServerStartWebsockets(string address, int port, int maxConnections)
 		{
 #if !UNITY_WEBGL || UNITY_EDITOR
-			Debug.Log("address: " + address);
 			Server.StartServer(address, port, maxConnections);
 #else
 			Debug.LogError("DoN't StArT tHe SeRvEr On WeBgL");
@@ -189,9 +187,21 @@ namespace Mirror
 
 		public void Shutdown()
 		{
-			ClientCoroutineHostBehaviour.Instance.Disconnect();
+			if (ClientCoroutineHostBehaviour.Instance != null)
+			{
+				if (ClientCoroutineHostBehaviour.Instance.SocketConnected)
+				{
+					ClientCoroutineHostBehaviour.Instance.Disconnect();
+				}
+			}
 #if !UNITY_WEBGL || UNITY_EDITOR
-			Server.StopServer();
+			if (Server != null)
+			{
+				if (Server.ServerActive)
+				{
+					Server.StopServer();
+				}
+			}
 #endif
 		}
 	}
