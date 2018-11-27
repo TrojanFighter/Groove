@@ -204,5 +204,10 @@ namespace Mirror
 			}
 #endif
 		}
-	}
+
+        public int GetMaxPacketSize()
+        {
+            return int.MaxValue;
+        }
+    }
 }
