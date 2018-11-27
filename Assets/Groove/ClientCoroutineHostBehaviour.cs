@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -40,24 +41,14 @@ namespace Mirror
 
 		private IEnumerator ConnectInternal(string address, int port)
 		{
-			var d = new System.UriBuilder(address)
-			{
-				Port = port
-			};
-			if (UseSecureClient)
-			{
-				d.Scheme = "wss://";
-			}
-			else
-			{
-				d.Scheme = "ws://";
-			}
-			d.Path += "game";
+			string scheme = UseSecureClient ? "wss://" : "ws://";
+
+			Uri uri = new System.UriBuilder(scheme, address, port, "game").Uri;
 			if (Mirror.LogFilter.Debug)
 			{
-				Debug.Log("attempting to start client on: " + d.Uri.ToString());
+				Debug.Log("attempting to start client on: " + uri.ToString());
 			}
-			Client = new WebSocketClient(d.Uri);
+			Client = new WebSocketClient(uri);
 			yield return StartCoroutine(Client.Connect());
 			SocketConnected = true;
 		}

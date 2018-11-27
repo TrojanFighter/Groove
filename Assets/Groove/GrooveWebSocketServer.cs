@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -59,24 +60,19 @@ namespace Mirror
 		public void StartServer(string address, int port, int maxConnections)
 		{
 # if !UNITY_WEBGL || UNITY_EDITOR
-			var d = new System.UriBuilder(address)
+			string scheme = UseSecureServer ? "wss://" : "ws://";
+			if (string.IsNullOrEmpty(address))
 			{
-				Port = port
-			};
-			if (UseSecureServer)
-			{
-				d.Scheme = "wss://";
+				address = "0.0.0.0";
 			}
-			else
-			{
-				d.Scheme = "ws://";
-			}
+
+			Uri uri = new System.UriBuilder(scheme, address, port).Uri;
 			if (Mirror.LogFilter.Debug)
 			{
-				Debug.Log("attempting to start WebSocket server on: " + d.Uri.ToString());
+				Debug.Log("attempting to start WebSocket server on: " + uri.ToString());
 			}
 			MaxConnections = maxConnections;
-			Server = new WebSocketServer(d.Uri.ToString());
+			Server = new WebSocketServer(uri.ToString());
 			Server.AddWebSocketService<MirrorWebSocketBehavior>("/game");
 			if (UseSecureServer)
 			{
