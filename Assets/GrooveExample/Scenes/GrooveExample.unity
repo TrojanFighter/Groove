@@ -520,9 +520,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_NetworkPort: 7777
-  m_ServerBindToIP: 1
-  m_ServerBindAddress: 10.1.10.65
-  m_NetworkAddress: 10.1.10.65
+  m_ServerBindToIP: 0
+  m_ServerBindAddress: localhost
+  m_NetworkAddress: localhost
   m_DontDestroyOnLoad: 1
   m_RunInBackground: 1
   m_ShowDebugMessages: 1
