@@ -69,7 +69,7 @@ namespace Mirror
 			Uri uri = new System.UriBuilder(scheme, address, port).Uri;
 			if (Mirror.LogFilter.Debug)
 			{
-				Debug.Log("attempting to start WebSocket server on: " + uri.ToString() + " host: " + address);
+				Debug.Log("attempting to start WebSocket server on: " + uri.ToString());
 			}
 			MaxConnections = maxConnections;
 			Server = new WebSocketServer(uri.ToString());
