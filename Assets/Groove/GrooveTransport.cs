@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Mirror
+namespace Mirror.Groove
 {
 	public class GrooveTransport : TransportLayer
 	{
 
 		public bool ClientConnectedLastFrame = false;
 
-		public GrooveClientContainer Client = new GrooveClientContainer();
+		public WebSocketClientContainer Client = new WebSocketClientContainer();
 
 #if !UNITY_WEBGL || UNITY_EDITOR
-		public GrooveWebSocketServer Server = new GrooveWebSocketServer();
+		public WebSocketServerContainer Server = new WebSocketServerContainer();
 
 #endif
 

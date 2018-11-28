@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Mirror
+namespace Mirror.Groove
 {
-	public class GrooveClientContainer
+	public class WebSocketClientContainer
 	{
 		public WebSocketClient ClientInterface;
 

@@ -1,4 +1,5 @@
 ﻿using Mirror;
+using Mirror.Groove;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -6,12 +7,8 @@ namespace GrooveExample
 {
 	public class GrooveEnabledNetworkManager : NetworkManager
 	{
-		public static GrooveEnabledNetworkManager Instance { get; private set; }
-
 		private void Start()
 		{
-			Instance = this;
-
 			if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null)
 			{
 				// headless mode.   Just start the server

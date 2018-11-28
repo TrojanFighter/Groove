@@ -4,11 +4,11 @@ using UnityEngine;
 using WebSocketSharp;
 using WebSocketSharp.Server;
 
-namespace Mirror
+namespace Mirror.Groove
 {
 	public class MirrorWebSocketBehavior : WebSocketBehavior
 	{
-		internal GrooveWebSocketServer Server;
+		internal WebSocketServerContainer Server;
 
 		internal int connectionId = 0;
 

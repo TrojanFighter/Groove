@@ -7,7 +7,7 @@ using UnityEngine;
 using WebSocketSharp.Server;
 #endif
 
-namespace Mirror
+namespace Mirror.Groove
 {
 	public class WebSocketMessage
 	{
@@ -17,10 +17,19 @@ namespace Mirror
 	}
 
 
-	public class GrooveWebSocketServer
+	public class WebSocketServerContainer
 	{
 #if !UNITY_WEBGL || UNITY_EDITOR
 		WebSocketServer WebsocketServer;
+
+		private readonly bool UseSecureServer = false;
+		private string PathToCertificate;
+		private readonly string CertificatePassword = "FillMeOutPlease";
+
+		public WebSocketServerContainer()
+		{
+			PathToCertificate = Application.dataPath + "/../certificate.pfx";
+		}
 
 		readonly Dictionary<int, MirrorWebSocketBehavior> WebsocketSessions = new Dictionary<int, MirrorWebSocketBehavior>();
 		public int MaxConnections { get; private set; }
@@ -81,15 +90,6 @@ namespace Mirror
 		}
 
 		public bool ServerActive { get { return WebsocketServer != null && WebsocketServer.IsListening; } }
-
-		private readonly bool UseSecureServer = false;
-		private string PathToCertificate;
-		private readonly string CertificatePassword = "FillMeOutPlease";
-
-		public GrooveWebSocketServer()
-		{
-			PathToCertificate = Application.dataPath + "/../certificate.pfx";
-		}
 
 		public bool RemoveConnectionId(int connectionId)
 		{
