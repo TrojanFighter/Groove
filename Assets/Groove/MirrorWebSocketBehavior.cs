@@ -12,10 +12,6 @@ namespace Mirror.Groove
 
 		internal int connectionId = 0;
 
-		public MirrorWebSocketBehavior()
-		{
-		}
-
 		protected override void OnOpen()
 		{
 			base.OnOpen();
@@ -31,11 +27,6 @@ namespace Mirror.Groove
 		{
 			Server.OnDisconnect(connectionId);
 			base.OnClose(e);
-		}
-
-		public void SendData(byte[] data)
-		{
-			base.Send(data);
 		}
 	}
 
