@@ -1,4 +1,6 @@
 ﻿using Mirror;
+using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace GrooveExample
 {
@@ -9,6 +11,12 @@ namespace GrooveExample
 		private void Start()
 		{
 			Instance = this;
+
+			if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null)
+			{
+				// headless mode.   Just start the server
+				StartServer();
+			}
 		}
 
 		public override void InitializeTransport()
