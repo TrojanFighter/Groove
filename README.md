@@ -12,7 +12,6 @@ A WebSockets transport layer for Mirror. WebGL is fully supported (for Mirror cl
 * Download the current version package from this page.
 * Import Mirror into your project using your favorite method (Asset Store, package, or building from source).
 * Import the current version package you downloaded from this page.
-* Once Unity compiles, add the "ClientCoroutineHostBehaviour" to a GameObject in the first scene the client loads.
 * Override the Mirror transport layer to use Groove (see Considerations below). You're done.
 
 ## Downloads
@@ -21,9 +20,7 @@ A WebSockets transport layer for Mirror. WebGL is fully supported (for Mirror cl
 
 ## Considerations
 
-In its current iteration, Groove requires you to use a separate MonoBehaviour as a "coroutine host" for the client. Simply add this "ClientCoroutineHostBehaviour" to a GameObject in your Scene and you are good to go, as long as you are using the Groove transport layer.
-
-You can use the Groove transport layer by overriding the following in your NetworkManager after importing the Groove scripts:
+To use Groove, you must override the following in your NetworkManager after importing the Groove scripts:
 
 ```C#
 public override void InitializeTransport()
