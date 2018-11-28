@@ -12,7 +12,13 @@ namespace Mirror
 
 		public static ClientCoroutineHostBehaviour Instance { get; set; }
 
-		public bool SocketConnected = false;
+		public bool SocketConnected 
+		{
+			get 
+			{
+				return Client != null && Client.Connected;
+			}
+		}
 
 		[SerializeField]
 		private bool UseSecureClient = false;
@@ -32,14 +38,14 @@ namespace Mirror
 
 		public void Connect(string address, int port)
 		{
-			StartCoroutine(ConnectInternal(address, port));
+			ConnectInternal(address, port);
 			if (LogFilter.Debug)
 			{
 				Debug.Log("WebSocket client connected");
 			}
 		}
 
-		private IEnumerator ConnectInternal(string address, int port)
+		private void ConnectInternal(string address, int port)
 		{
 			string scheme = UseSecureClient ? "wss://" : "ws://";
 
@@ -49,14 +55,12 @@ namespace Mirror
 				Debug.Log("attempting to start client on: " + uri.ToString());
 			}
 			Client = new WebSocketClient(uri);
-			yield return StartCoroutine(Client.Connect());
-			SocketConnected = true;
+			Client.Connect();
 		}
 
 		public void Disconnect()
 		{
 			Client.Close();
-			SocketConnected = false;
 		}
 
 	}

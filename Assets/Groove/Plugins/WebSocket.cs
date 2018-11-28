@@ -32,8 +32,6 @@ public class WebSocketClient
 		return Encoding.UTF8.GetString (retval);
 	}
 
-	public bool m_IsConnected = false;
-
 	public void ManuallyAddMessage(byte[] Msg)
 	{
 
@@ -78,18 +76,21 @@ public class WebSocketClient
 		return buffer;
 	}
 
-	public IEnumerator Connect()
+	public void Connect()
 	{
 		m_NativeRef = SocketCreate (mUrl.ToString());
-
-		while (SocketState(m_NativeRef) == 0)
-			yield return 0;
-		m_IsConnected = true;
 	}
  
+	public bool Connected 
+	{
+		get
+		{
+			SocketState(m_NativeRef) != 0;
+		}
+	}
+
 	public void Close()
 	{
-		m_IsConnected = false;
 		SocketClose(m_NativeRef);
 	}
 
@@ -112,15 +113,22 @@ public class WebSocketClient
 	Queue<byte[]> m_Messages = new Queue<byte[]>();
 	string m_Error = null;
 
-	public IEnumerator Connect()
+	bool m_IsConnected = false;
+
+	public bool Connected
+	{
+		get {
+			return m_IsConnected;
+		}
+	}
+
+	public void Connect()
 	{
 		m_Socket = new WebSocketSharp.WebSocket(mUrl.ToString());
 		m_Socket.OnMessage += (sender, e) => { lock (m_Messages) { m_Messages.Enqueue(e.RawData); } };
 		m_Socket.OnOpen += (sender, e) => m_IsConnected = true;
 		m_Socket.OnError += (sender, e) => m_Error = e.Message;
 		m_Socket.ConnectAsync();
-		while (!m_IsConnected && m_Error == null)
-			yield return 0;
 	}
 
 	public void Send(byte[] buffer)
