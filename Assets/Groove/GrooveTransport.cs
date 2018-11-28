@@ -9,6 +9,8 @@ namespace Mirror
 
 		public bool ClientConnectedLastFrame = false;
 
+		public GrooveClientContainer Client = new GrooveClientContainer();
+
 #if !UNITY_WEBGL || UNITY_EDITOR
 		public GrooveWebSocketServer Server = new GrooveWebSocketServer();
 
@@ -23,17 +25,17 @@ namespace Mirror
 
 		public void ClientConnect(string address, int port)
 		{
-			ClientCoroutineHostBehaviour.Instance.Connect(address, port);
+			Client.Connect(address, port);
 		}
 
 		public bool ClientConnected()
 		{
-			return ClientCoroutineHostBehaviour.Instance.SocketConnected;
+			return Client.SocketConnected;
 		}
 
 		public void ClientDisconnect()
 		{
-			ClientCoroutineHostBehaviour.Instance.Disconnect();
+			Client.Disconnect();
 		}
 
 		public bool ClientGetNextMessage(out TransportEvent transportEvent, out byte[] data)
@@ -41,11 +43,11 @@ namespace Mirror
 			transportEvent = TransportEvent.Disconnected;
 			data = null;
 
-			if (ClientCoroutineHostBehaviour.Instance.Client != null)
+			if (Client.ClientInterface != null)
 			{
 				if (!ClientConnectedLastFrame)
 				{
-					ClientConnectedLastFrame = ClientCoroutineHostBehaviour.Instance.SocketConnected;
+					ClientConnectedLastFrame = Client.SocketConnected;
 					if (ClientConnectedLastFrame)
 					{
 						transportEvent = TransportEvent.Connected;
@@ -54,11 +56,11 @@ namespace Mirror
 				}
 				try
 				{
-					var c = ClientCoroutineHostBehaviour.Instance.Client.Recv();
-					if (c != null)
+					var Rcvd = Client.ClientInterface.Recv();
+					if (Rcvd != null)
 					{
 						transportEvent = TransportEvent.Data;
-						data = c;
+						data = Rcvd;
 						return true;
 					}
 					else
@@ -81,7 +83,7 @@ namespace Mirror
 
 		public bool ClientSend(int channelId, byte[] data)
 		{
-			ClientCoroutineHostBehaviour.Instance.Client.Send(data);
+			Client.ClientInterface.Send(data);
 			return true;
 		}
 
@@ -187,11 +189,11 @@ namespace Mirror
 
 		public void Shutdown()
 		{
-			if (ClientCoroutineHostBehaviour.Instance != null)
+			if (Client != null)
 			{
-				if (ClientCoroutineHostBehaviour.Instance.SocketConnected)
+				if (Client.SocketConnected)
 				{
-					ClientCoroutineHostBehaviour.Instance.Disconnect();
+					Client.Disconnect();
 				}
 			}
 #if !UNITY_WEBGL || UNITY_EDITOR

@@ -5,36 +5,14 @@ using UnityEngine;
 
 namespace Mirror
 {
-	public class ClientCoroutineHostBehaviour : MonoBehaviour
+	public class GrooveClientContainer
 	{
+		public WebSocketClient ClientInterface;
 
-		public WebSocketClient Client;
-
-		public static ClientCoroutineHostBehaviour Instance { get; set; }
-
-		public bool SocketConnected 
-		{
-			get 
-			{
-				return Client != null && Client.Connected;
-			}
-		}
+		public bool SocketConnected { get { return ClientInterface != null && ClientInterface.Connected; } }
 
 		[SerializeField]
 		private bool UseSecureClient = false;
-
-		private void Start()
-		{
-			if (Instance == null)
-			{
-				Instance = this;
-				DontDestroyOnLoad(gameObject);
-			}
-			else
-			{
-				Destroy(gameObject);
-			}
-		}
 
 		public void Connect(string address, int port)
 		{
@@ -54,13 +32,13 @@ namespace Mirror
 			{
 				Debug.Log("attempting to start client on: " + uri.ToString());
 			}
-			Client = new WebSocketClient(uri);
-			Client.Connect();
+			ClientInterface = new WebSocketClient(uri);
+			ClientInterface.Connect();
 		}
 
 		public void Disconnect()
 		{
-			Client.Close();
+			ClientInterface.Close();
 		}
 
 	}
