@@ -12,12 +12,12 @@ namespace GrooveExample
 		{
 			Instance = this;
 
-            if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null)
-            {
-                // headless mode.   Just start the server
-                StartServer();
-            }
-        }
+			if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null)
+			{
+				// headless mode.   Just start the server
+				StartServer();
+			}
+		}
 
 		public override void InitializeTransport()
 		{
