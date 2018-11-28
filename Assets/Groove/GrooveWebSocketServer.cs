@@ -17,10 +17,7 @@ namespace Mirror
 
 		public static int MaxConnections { get; private set; }
 
-		public bool ServerActive { get
-			{
-				return Server.IsListening;
-			} }
+		public bool ServerActive { get { return Server != null && Server.IsListening; } }
 
 		private readonly bool UseSecureServer = false;
 		private string PathToCertificate;
