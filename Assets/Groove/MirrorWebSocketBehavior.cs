@@ -8,43 +8,36 @@ namespace Mirror
 {
 	public class MirrorWebSocketBehavior : WebSocketBehavior
 	{
+		internal GrooveWebSocketServer Server;
+
+		internal int connectionId = 0;
+
+		public MirrorWebSocketBehavior()
+		{
+		}
+
 		protected override void OnOpen()
 		{
 			base.OnOpen();
-			int connId;
-			var AddPlayer = GrooveWebSocketServer.AddConnectionId(ID, out connId);
-			if (AddPlayer)
-			{
-				GrooveTransport.AddMessage(new WebSocketMessage { ConnectionId = ID, Type = TransportEvent.Connected, Data = null });
-			}
-			else
-			{
-				GrooveTransport.AddMessage(new WebSocketMessage { ConnectionId = ID, Type = TransportEvent.Disconnected });
-			}
+			Server.OnConnect(connectionId, this);
 		}
+
 		protected override void OnMessage(MessageEventArgs e)
 		{
-			Debug.Log("Got Message from: " + ID);
-			GrooveTransport.AddMessage(new WebSocketMessage
-			{
-				ConnectionId = this.ID,
-				Type = TransportEvent.Data,
-				Data = e.RawData
-			});
+			Server.OnMessage(connectionId, e.RawData);
 		}
 
 		protected override void OnClose(CloseEventArgs e)
 		{
+			Server.OnDisconnect(connectionId);
 			base.OnClose(e);
-			GrooveTransport.AddMessage(new WebSocketMessage { ConnectionId = ID, Type = TransportEvent.Disconnected, Data = null });
+		}
+
+		public void SendData(byte[] data)
+		{
+			base.Send(data);
 		}
 	}
 
-	public class WebSocketMessage
-	{
-		public string ConnectionId;
-		public TransportEvent Type;
-		public byte[] Data;
-	}
 }
 #endif

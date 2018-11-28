@@ -14,13 +14,6 @@ namespace Mirror
 #if !UNITY_WEBGL || UNITY_EDITOR
 		public GrooveWebSocketServer Server = new GrooveWebSocketServer();
 
-		static Queue<WebSocketMessage> ServerMessages = new Queue<WebSocketMessage>();
-
-
-		public static void AddMessage(WebSocketMessage msg)
-		{
-			ServerMessages.Enqueue(msg);
-		}
 #endif
 
 		public void ClientConnect(string address, int port)
@@ -68,7 +61,7 @@ namespace Mirror
 						return false;
 					}
 				}
-				catch(System.Exception e)
+				catch (System.Exception e)
 				{
 					Debug.LogError("Client Exception: " + e);
 					return false;
@@ -78,7 +71,7 @@ namespace Mirror
 			{
 				return false;
 			}
-			
+
 		}
 
 		public bool ClientSend(int channelId, byte[] data)
@@ -90,7 +83,7 @@ namespace Mirror
 		public bool GetConnectionInfo(int connectionId, out string address)
 		{
 #if !UNITY_WEBGL || UNITY_EDITOR
-			return Server.GetConnectionId(connectionId, out address);
+			return Server.GetConnectionInfo(connectionId, out address);
 #else
 			address = "";
 			return false;
@@ -101,7 +94,7 @@ namespace Mirror
 		{
 #if !UNITY_WEBGL || UNITY_EDITOR
 			return Server.ServerActive;
-			#else
+#else
 			return false;
 #endif
 		}
@@ -109,7 +102,7 @@ namespace Mirror
 		public bool ServerDisconnect(int connectionId)
 		{
 #if !UNITY_WEBGL || UNITY_EDITOR
-			return GrooveWebSocketServer.RemoveConnectionId(connectionId);
+			return Server.RemoveConnectionId(connectionId);
 #else
 			return false;
 #endif
@@ -122,30 +115,29 @@ namespace Mirror
 			data = null;
 			connectionId = 0;
 #if !UNITY_WEBGL || UNITY_EDITOR
-			if (ServerMessages.Count == 0) {
+
+			WebSocketMessage message = Server.GetNextMessage();
+			if (message == null)
 				return false;
-			}
-			else
+			connectionId = message.connectionId;
+
+			switch (message.Type)
 			{
-				var d = ServerMessages.Dequeue();
-				connectionId = GrooveWebSocketServer.GetMirrorConnectionId(d.ConnectionId);
-				switch (d.Type)
-				{
-					case TransportEvent.Connected:
-						transportEvent = TransportEvent.Connected;
-						break;
-					case TransportEvent.Data:
-						transportEvent = TransportEvent.Data;
-						data = d.Data;
-						break;
-					case TransportEvent.Disconnected:
-						transportEvent = TransportEvent.Disconnected;
-						break;
-					default:
-						break;
-				}
-				return true;
+				case TransportEvent.Connected:
+					transportEvent = TransportEvent.Connected;
+					break;
+				case TransportEvent.Data:
+					transportEvent = TransportEvent.Data;
+					data = message.Data;
+					break;
+				case TransportEvent.Disconnected:
+					transportEvent = TransportEvent.Disconnected;
+					break;
+				default:
+					break;
 			}
+			return true;
+
 #else
 			Debug.LogError("DoN't StArT tHe SeRvEr On WeBgL");
 			return false;
@@ -207,9 +199,9 @@ namespace Mirror
 #endif
 		}
 
-        public int GetMaxPacketSize()
-        {
-            return int.MaxValue;
-        }
-    }
+		public int GetMaxPacketSize()
+		{
+			return int.MaxValue;
+		}
+	}
 }
