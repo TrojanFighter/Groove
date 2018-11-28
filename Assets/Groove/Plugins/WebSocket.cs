@@ -85,7 +85,7 @@ public class WebSocketClient
 	{
 		get
 		{
-			SocketState(m_NativeRef) != 0;
+			return SocketState(m_NativeRef) != 0;
 		}
 	}
 
