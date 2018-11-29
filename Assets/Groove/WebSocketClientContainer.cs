@@ -14,6 +14,8 @@ namespace Mirror.Groove
 		[SerializeField]
 		private bool UseSecureClient = false;
 
+		private bool ClientConnectedLastFrame = false;
+
 		public void Connect(string address, int port)
 		{
 			ConnectInternal(address, port);
@@ -43,24 +45,43 @@ namespace Mirror.Groove
 
 		public bool GetNextMessage(out WebSocketMessage msg)
 		{
-			msg = null;
-			try
+			msg = new WebSocketMessage();
+			msg.Type = TransportEvent.Disconnected;
+			msg.Data = null;
+
+			if (ClientInterface != null)
 			{
-				var Rcvd = ClientInterface.Recv();
-				if (Rcvd != null)
+				if (!ClientConnectedLastFrame)
 				{
-					msg.Type = TransportEvent.Data;
-					msg.Data = Rcvd;
-					return true;
+					ClientConnectedLastFrame = SocketConnected;
+					if (ClientConnectedLastFrame)
+					{
+						msg.Type = TransportEvent.Connected;
+						return true;
+					}
 				}
-				else
+				try
 				{
+					var Rcvd = ClientInterface.Recv();
+					if (Rcvd != null)
+					{
+						msg.Type = TransportEvent.Data;
+						msg.Data = Rcvd;
+						return true;
+					}
+					else
+					{
+						return false;
+					}
+				}
+				catch (System.Exception e)
+				{
+					Debug.LogError("Client Exception: " + e);
 					return false;
 				}
 			}
-			catch (System.Exception e)
+			else
 			{
-				Debug.LogError("Client Exception: " + e);
 				return false;
 			}
 		}

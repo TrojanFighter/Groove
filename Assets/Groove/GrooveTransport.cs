@@ -7,8 +7,6 @@ namespace Mirror.Groove
 	public class GrooveTransport : TransportLayer
 	{
 
-		public bool ClientConnectedLastFrame = false;
-
 		public WebSocketClientContainer Client = new WebSocketClientContainer();
 
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -33,45 +31,19 @@ namespace Mirror.Groove
 
 		public bool ClientGetNextMessage(out TransportEvent transportEvent, out byte[] data)
 		{
-			transportEvent = TransportEvent.Disconnected;
-			data = null;
-
-			if (Client.ClientInterface != null)
+			WebSocketMessage msg;
+			bool GotMessage = Client.GetNextMessage(out msg);
+			if (GotMessage)
 			{
-				if (!ClientConnectedLastFrame)
-				{
-					ClientConnectedLastFrame = Client.SocketConnected;
-					if (ClientConnectedLastFrame)
-					{
-						transportEvent = TransportEvent.Connected;
-						return true;
-					}
-				}
-				try
-				{
-					var Rcvd = Client.ClientInterface.Recv();
-					if (Rcvd != null)
-					{
-						transportEvent = TransportEvent.Data;
-						data = Rcvd;
-						return true;
-					}
-					else
-					{
-						return false;
-					}
-				}
-				catch (System.Exception e)
-				{
-					Debug.LogError("Client Exception: " + e);
-					return false;
-				}
+				transportEvent = msg.Type;
+				data = msg.Data;
 			}
 			else
 			{
-				return false;
+				transportEvent = TransportEvent.Disconnected;
+				data = null;
 			}
-
+			return GotMessage;
 		}
 
 		public bool ClientSend(int channelId, byte[] data)
