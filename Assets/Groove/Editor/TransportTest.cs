@@ -89,7 +89,7 @@ namespace Mirror.Groove.Tests
 
 
 			// then we should receive the data
-			client.Send(utf8.GetBytes("Hello world"));
+			client.ClientInterface.Send(utf8.GetBytes("Hello world"));
 			WebSocketMessage dataMsg = NextMessage(server);
 			Assert.That(dataMsg.Type, Is.EqualTo(TransportEvent.Data));
 			string str = utf8.GetString(dataMsg.Data);
@@ -210,7 +210,7 @@ namespace Mirror.Groove.Tests
 			int id = serverConnectMsg.connectionId;
 
 			// Send a large message,  bigger thank 64K
-			client.Send(new byte[100000]);
+			client.ClientInterface.Send(new byte[100000]);
 			WebSocketMessage dataMsg = NextMessage(server);
 			Assert.That(dataMsg.Type, Is.EqualTo(TransportEvent.Data));
 			Assert.That(dataMsg.Data.Length, Is.EqualTo(100000));
@@ -245,7 +245,7 @@ namespace Mirror.Groove.Tests
 			WebSocketMessage message;
 			int count = 0;
 
-			while (!client.ClientInterface.Recv(out message))
+			while (!client.GetNextMessage(out message))
 			{
 				count++;
 				Thread.Sleep(100);

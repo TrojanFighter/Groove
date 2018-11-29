@@ -41,5 +41,28 @@ namespace Mirror.Groove
 			ClientInterface.Close();
 		}
 
+		public bool GetNextMessage(out WebSocketMessage msg)
+		{
+			msg = null;
+			try
+			{
+				var Rcvd = ClientInterface.Recv();
+				if (Rcvd != null)
+				{
+					msg.Type = TransportEvent.Data;
+					msg.Data = Rcvd;
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			catch (System.Exception e)
+			{
+				Debug.LogError("Client Exception: " + e);
+				return false;
+			}
+		}
 	}
 }

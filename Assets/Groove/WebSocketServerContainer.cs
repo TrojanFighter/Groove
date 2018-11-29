@@ -58,6 +58,20 @@ namespace Mirror.Groove
 			}
 		}
 
+		public bool GetNextMessage(out WebSocketMessage message)
+		{
+			lock (MessageQueue)
+			{
+				if (MessageQueue.Count > 0)
+				{
+					message =  MessageQueue.Dequeue();
+					return true;
+				}
+				message = null;
+				return false;
+			}
+		}
+
 		internal int NextId()
 		{
 			return Interlocked.Increment(ref connectionIdCounter);
@@ -166,7 +180,7 @@ namespace Mirror.Groove
 			return false;
 		}
 
-		internal bool Send(int connectionId, byte[] data)
+		public bool Send(int connectionId, byte[] data)
 		{
 			lock (WebsocketSessions)
 			{
@@ -179,6 +193,23 @@ namespace Mirror.Groove
 				}
 			}
 			return false;
+		}
+
+		public bool Disconnect(int connectionId)
+		{
+			lock (WebsocketSessions)
+			{
+				MirrorWebSocketBehavior session;
+				if(WebsocketSessions.TryGetValue(connectionId, out session))
+				{
+					WebsocketServer.WebSocketServices["/game"].Sessions.CloseSession(session.ID);
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
 		}
 
 #else
