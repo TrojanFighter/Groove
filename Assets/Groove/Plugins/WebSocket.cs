@@ -128,7 +128,7 @@ public class WebSocketClient
 		m_Socket.OnMessage += (sender, e) => { lock (m_Messages) { m_Messages.Enqueue(e.RawData); } };
 		m_Socket.OnOpen += (sender, e) => m_IsConnected = true;
 		m_Socket.OnError += (sender, e) => m_Error = e.Message;
-		m_Socket.ConnectAsync();
+		m_Socket.Connect();
 	}
 
 	public void Send(byte[] buffer)
