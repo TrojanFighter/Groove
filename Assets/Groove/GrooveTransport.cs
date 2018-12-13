@@ -175,5 +175,10 @@ namespace Mirror.Groove
 		{
 			return int.MaxValue;
 		}
+
+		public int GetMaxPacketSize(int channelId = 0)
+		{
+			return int.MaxValue;
+		}
 	}
 }
