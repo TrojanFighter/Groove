@@ -200,7 +200,7 @@ namespace Mirror.Groove
 		{
 			lock (WebsocketSessions)
 			{
-				MirrorWebSocketBehavior session;
+				IWebSocketSession session;
 				if(WebsocketSessions.TryGetValue(connectionId, out session))
 				{
 					WebsocketServer.WebSocketServices["/game"].Sessions.CloseSession(session.ID);
