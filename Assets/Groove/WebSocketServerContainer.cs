@@ -34,43 +34,13 @@ namespace Mirror.Groove
 		readonly Dictionary<int, MirrorWebSocketBehavior> WebsocketSessions = new Dictionary<int, MirrorWebSocketBehavior>();
 		public int MaxConnections { get; private set; }
 
-		private readonly Queue<WebSocketMessage> MessageQueue = new Queue<WebSocketMessage>();
-
-		internal void AddMessage(WebSocketMessage webSocketMessage)
-		{
-			lock (MessageQueue)
-			{
-				MessageQueue.Enqueue(webSocketMessage);
-			}
-		}
+		// events for the server
+		public event Action<int> OnServerConnect;
+		public event Action<int, byte[]> OnServerData;
+		public event Action<int, Exception> OnServerError;
+		public event Action<int> OnServerDisconnect;
 
 		int connectionIdCounter = 1;
-
-		public WebSocketMessage GetNextMessage()
-		{
-			lock (MessageQueue)
-			{
-				if (MessageQueue.Count > 0)
-				{
-					return MessageQueue.Dequeue();
-				}
-				return null;
-			}
-		}
-
-		public bool GetNextMessage(out WebSocketMessage message)
-		{
-			lock (MessageQueue)
-			{
-				if (MessageQueue.Count > 0)
-				{
-					message =  MessageQueue.Dequeue();
-					return true;
-				}
-				message = null;
-				return false;
-			}
-		}
 
 		internal int NextId()
 		{
@@ -79,28 +49,17 @@ namespace Mirror.Groove
 
 		internal void OnConnect(int connectionId, MirrorWebSocketBehavior socketBehavior)
 		{
-			lock (WebsocketSessions)
-			{
-				WebsocketSessions[connectionId] = socketBehavior;
-			}
-			var message = new WebSocketMessage { connectionId = connectionId, Type = TransportEvent.Connected };
-			AddMessage(message);
+			OnServerConnect.Invoke(connectionId);
 		}
 
 		internal void OnMessage(int connectionId, byte[] data)
 		{
-			var message = new WebSocketMessage { connectionId = connectionId, Type = TransportEvent.Data, Data = data };
-			AddMessage(message);
+			OnServerData.Invoke(connectionId, data);
 		}
 
 		internal void OnDisconnect(int connectionId)
 		{
-			lock (WebsocketSessions)
-			{
-				WebsocketSessions.Remove(connectionId);
-			}
-			var message = new WebSocketMessage { connectionId = connectionId, Type = TransportEvent.Disconnected };
-			AddMessage(message);
+			OnServerDisconnect.Invoke(connectionId);
 		}
 
 		public bool ServerActive { get { return WebsocketServer != null && WebsocketServer.IsListening; } }

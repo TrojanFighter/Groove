@@ -16,13 +16,43 @@ namespace Mirror.Groove
 
 		private bool ClientConnectedLastFrame = false;
 
+		public event Action OnClientConnect;
+		public event Action<byte[]> OnClientData;
+		public event Action<Exception> OnClientError;
+		public event Action OnClientDisconnect;
+
 		public void Connect(string address, int port)
 		{
+			WebSocketClient.OnClientData += WebSocketClient_OnClientData;
+			WebSocketClient.OnClientConnect += WebSocketClient_OnClientConnect;
+			WebSocketClient.OnClientDisconnect += WebSocketClient_OnClientDisconnect;
+			WebSocketClient.OnClientError += WebSocketClient_OnClientError;
 			ConnectInternal(address, port);
+			
 			if (LogFilter.Debug)
 			{
 				Debug.Log("WebSocket client connected");
 			}
+		}
+
+		private void WebSocketClient_OnClientError(Exception obj)
+		{
+			OnClientError.Invoke(obj);
+		}
+
+		private void WebSocketClient_OnClientDisconnect()
+		{
+			OnClientDisconnect.Invoke();
+		}
+
+		private void WebSocketClient_OnClientConnect()
+		{
+			OnClientConnect.Invoke();
+		}
+
+		private void WebSocketClient_OnClientData(byte[] obj)
+		{
+			OnClientData.Invoke(obj);
 		}
 
 		private void ConnectInternal(string address, int port)

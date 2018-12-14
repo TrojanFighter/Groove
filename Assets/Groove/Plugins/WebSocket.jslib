@@ -1,7 +1,7 @@
 var LibraryWebSockets = {
 $webSocketInstances: [],
 
-SocketCreate: function(url)
+SocketCreate: function(url, MsgRcvd, ConnectedCallback, DisconnectedCallback, ErrorCallback)
 {
 	var str = Pointer_stringify(url);
 	var socket = {
@@ -13,6 +13,10 @@ SocketCreate: function(url)
 
 	socket.socket.binaryType = 'arraybuffer';
 
+	socket.socket.onopen = function(e){
+		Runtime.dynCall('v', ConnectedCallback, 0);
+	}
+
 	socket.socket.onmessage = function (e) {
 		// Todo: handle other data types?
 		if (e.data instanceof Blob)
@@ -20,20 +24,41 @@ SocketCreate: function(url)
 			var reader = new FileReader();
 			reader.addEventListener("loadend", function() {
 				var array = new Uint8Array(reader.result);
-				socket.messages.push(array);
+
+				var dataBytes = array.length * array.BYTES_PER_ELEMENT;
+				var dataPtr = Module._malloc(dataBytes);
+				var dataHeap = new Uint8Array(Module.HEAPU8.buffer, dataPtr, dataBytes);
+				dataHeap.set(array);
+
+				var args = [dataPtr, dataBytes];
+				Runtime.dynCall('vii', MsgRcvd, args);
 			});
 			reader.readAsArrayBuffer(e.data);
 		}
 		else if (e.data instanceof ArrayBuffer)
 		{
 			var array = new Uint8Array(e.data);
-			socket.messages.push(array);
+			
+			var dataBytes = array.length * array.BYTES_PER_ELEMENT;
+				var dataPtr = Module._malloc(dataBytes);
+				var dataHeap = new Uint8Array(Module.HEAPU8.buffer, dataPtr, dataBytes);
+				dataHeap.set(array);
+
+				var args = [dataPtr, dataBytes];
+				Runtime.dynCall('vii', MsgRcvd, args);
 		}
 		else if(typeof e.data === "string") {
 			var reader = new FileReader();
 			reader.addEventListener("loadend", function() {
 				var array = new Uint8Array(reader.result);
-				socket.messages.push(array);
+
+				var dataBytes = array.length * array.BYTES_PER_ELEMENT;
+				var dataPtr = Module._malloc(dataBytes);
+				var dataHeap = new Uint8Array(Module.HEAPU8.buffer, dataPtr, dataBytes);
+				dataHeap.set(array);
+
+				var args = [dataPtr, dataBytes];
+				Runtime.dynCall('vii', MsgRcvd, args);
 			});
 			var blob = new Blob([e.data]);
 			reader.readAsArrayBuffer(blob);
@@ -71,6 +96,10 @@ SocketCreate: function(url)
 						socket.error = "Error "+e.code;
 				}
 			}
+			Runtime.dynCall('v', ErrorCallback, 0);
+		}
+		else{
+			Runtime.dynCall('v', DisconnectedCallback, 0);
 		}
 	}
 	var instance = webSocketInstances.push(socket) - 1;
@@ -99,28 +128,14 @@ SocketSend: function (socketInstance, ptr, length)
 	socket.socket.send (HEAPU8.buffer.slice(ptr, ptr+length));
 },
 
-SocketRecvLength: function(socketInstance)
-{
-	var socket = webSocketInstances[socketInstance];
-	if(socket==null){
-		return 0;
-	}
-	else{
-		if (socket.messages.length == 0)
-			return 0;
-		return socket.messages[0].length;
-	}
-},
+RaiseMirrorData : function(obj, array){
+	var dataBytes = array.length * array.BYTES_PER_ELEMENT;
+	var dataPtr = Module._malloc(dataBytes);
+	var dataHeap = new Uint8Array(Module.HEAPU8.buffer, dataPtr, dataBytes);
+	dataHeap.set(array);
 
-SocketRecv: function (socketInstance, ptr, length)
-{
-	var socket = webSocketInstances[socketInstance];
-	if (socket.messages.length == 0)
-		return 0;
-	if (socket.messages[0].length > length)
-		return 0;
-	HEAPU8.set(socket.messages[0], ptr);
-	socket.messages = socket.messages.slice(1);
+	var args = [dataPtr, dataBytes];
+	Runtime.dynCall('vii', obj, args);
 },
 
 SocketClose: function (socketInstance)
