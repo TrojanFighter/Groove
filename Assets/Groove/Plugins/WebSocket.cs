@@ -36,7 +36,7 @@ public class WebSocketClient
 
 	public void Connect()
 	{
-		m_NativeRef = SocketCreate (mUrl.ToString(), MsgRcvdCallback, CtdCallback, DisctdCallback, ErrorCbk);
+		m_NativeRef = SocketCreate(mUrl.ToString(), MsgRcvdCallback, CtdCallback, DisctdCallback, ErrorCbk);
 	}
  
 	public bool Connected 
@@ -56,7 +56,7 @@ public class WebSocketClient
 	public delegate void MessageRecvCallback(System.IntPtr ptr, System.IntPtr Length);
 
 	[MonoPInvokeCallback(typeof(MessageRecvCallback))]
-	public static void MsgRcvdCallback(System.IntPtr ptr, System.IntPtr Length)
+	public void MsgRcvdCallback(System.IntPtr ptr, System.IntPtr Length)
 	{
 		int ReadLength = Length.ToInt32();
 		byte[] msg = new byte[ReadLength];
@@ -68,7 +68,7 @@ public class WebSocketClient
 	public delegate void ConnectedCallback();
 
 	[MonoPInvokeCallback(typeof(ConnectedCallback))]
-	public static void CtdCallback()
+	public void CtdCallback()
 	{
 		OnClientConnect.Invoke();
 	}
@@ -76,7 +76,7 @@ public class WebSocketClient
 	public delegate void DisconnectedCallback();
 
 	[MonoPInvokeCallback(typeof(DisconnectedCallback))]
-	public static void DisctdCallback()
+	public void DisctdCallback()
 	{
 		OnClientDisconnect.Invoke();
 	}
@@ -84,7 +84,7 @@ public class WebSocketClient
 	public delegate void ErrorCallback(System.IntPtr ErrorCode);
 
 	[MonoPInvokeCallback(typeof(ErrorCallback))]
-	public static void ErrorCbk(System.IntPtr Code)
+	public void ErrorCbk(System.IntPtr Code)
 	{
 		OnClientError.Invoke(new System.Exception("WebSocket Close Code: " + Code.ToString()));
 	}

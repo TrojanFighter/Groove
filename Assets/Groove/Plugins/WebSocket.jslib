@@ -13,7 +13,9 @@ SocketCreate: function(url, MsgRcvd, ConnectedCallback, DisconnectedCallback, Er
 	socket.socket.binaryType = 'arraybuffer';
 
 	socket.socket.onopen = function(e){
+		console.log("connected web socket");
 		Runtime.dynCall('v', ConnectedCallback, 0);
+		console.log("dispatched");
 	};
 
 	socket.socket.onmessage = function (e) {
@@ -62,6 +64,7 @@ SocketError: function (socketInstance, ptr, bufsize)
 
 SocketSend: function (socketInstance, ptr, length)
 {
+	console.log("sending data");
 	var socket = webSocketInstances[socketInstance];
 	socket.socket.send (HEAPU8.buffer.slice(ptr, ptr+length));
 },

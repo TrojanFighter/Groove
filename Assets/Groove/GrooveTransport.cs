@@ -186,7 +186,7 @@ namespace Mirror.Groove
 		public virtual void ServerSend(int connectionId, int channelId, byte[] data)
 		{
 #if !UNITY_WEBGL || UNITY_EDITOR
-
+			Debug.Log("Sending data");
 			Server.Send(connectionId, data);
 #else
 #endif
