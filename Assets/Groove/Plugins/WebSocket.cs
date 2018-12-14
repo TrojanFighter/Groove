@@ -55,12 +55,12 @@ public class WebSocketClient
 		OnClientDisconnect.Invoke();
 	}
 
-	public delegate void ErrorCallback();
+	public delegate void ErrorCallback(System.IntPtr ErrorCode);
 
 	[MonoPInvokeCallback(typeof(ErrorCallback))]
-	public static void ErrorCbk()
+	public static void ErrorCbk(System.IntPtr Code)
 	{
-		OnClientError.Invoke(new System.Exception());
+		OnClientError.Invoke(new System.Exception("WebSocket Close Code: "+Code.ToString()));
 	}
 
 
