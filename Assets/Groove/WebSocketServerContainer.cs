@@ -31,7 +31,7 @@ namespace Mirror.Groove
 			PathToCertificate = Application.dataPath + "/../certificate.pfx";
 		}
 
-		readonly Dictionary<int, MirrorWebSocketBehavior> WebsocketSessions = new Dictionary<int, MirrorWebSocketBehavior>();
+		readonly Dictionary<int, IWebSocketSession> WebsocketSessions = new Dictionary<int, IWebSocketSession>();
 		public int MaxConnections { get; private set; }
 
 		// events for the server
@@ -47,7 +47,7 @@ namespace Mirror.Groove
 			return Interlocked.Increment(ref connectionIdCounter);
 		}
 
-		internal void OnConnect(int connectionId, MirrorWebSocketBehavior socketBehavior)
+		internal void OnConnect(int connectionId, IWebSocketSession socketBehavior)
 		{
 			OnServerConnect.Invoke(connectionId);
 		}
@@ -68,7 +68,7 @@ namespace Mirror.Groove
 		{
 			lock (WebsocketSessions)
 			{
-				MirrorWebSocketBehavior session;
+				IWebSocketSession session;
 
 				if (WebsocketSessions.TryGetValue(connectionId, out session))
 				{
@@ -127,7 +127,7 @@ namespace Mirror.Groove
 		{
 			lock (WebsocketSessions)
 			{
-				MirrorWebSocketBehavior session;
+				IWebSocketSession session;
 
 				if (WebsocketSessions.TryGetValue(connectionId, out session))
 				{
@@ -143,11 +143,11 @@ namespace Mirror.Groove
 		{
 			lock (WebsocketSessions)
 			{
-				MirrorWebSocketBehavior session;
+				IWebSocketSession session;
 
 				if (WebsocketSessions.TryGetValue(connectionId, out session))
 				{
-					session.SendData(data);
+					session.Context.WebSocket.Send(data);
 					return true;
 				}
 			}
@@ -158,7 +158,7 @@ namespace Mirror.Groove
 		{
 			lock (WebsocketSessions)
 			{
-				MirrorWebSocketBehavior session;
+				IWebSocketSession session;
 				if(WebsocketSessions.TryGetValue(connectionId, out session))
 				{
 					WebsocketServer.WebSocketServices["/game"].Sessions.CloseSession(session.ID);
