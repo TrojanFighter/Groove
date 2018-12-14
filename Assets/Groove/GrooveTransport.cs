@@ -116,6 +116,7 @@ namespace Mirror.Groove
 #endif
 		}
 
+#if !UNITY_WEBGL || UNITY_EDITOR
 		private void BindServerEvents()
 		{
 			Server.OnServerConnect += Server_OnServerConnect;
@@ -123,6 +124,7 @@ namespace Mirror.Groove
 			Server.OnServerDisconnect += Server_OnServerDisconnect;
 			Server.OnServerError += Server_OnServerError;
 		}
+#endif
 
 		private void Server_OnServerError(int arg1, Exception arg2)
 		{
