@@ -17,51 +17,17 @@ SocketCreate: function(url, MsgRcvd, ConnectedCallback, DisconnectedCallback, Er
 	};
 
 	socket.socket.onmessage = function (e) {
-		// Todo: handle other data types?
 		console.log("received data");
-		if (e.data instanceof Blob)
-		{
-			var reader = new FileReader();
-			reader.addEventListener("loadend", function() {
-				var array = new Uint8Array(reader.result);
-
-				var dataBytes = array.length * array.BYTES_PER_ELEMENT;
-				var dataPtr = Module._malloc(dataBytes);
-				var dataHeap = new Uint8Array(Module.HEAPU8.buffer, dataPtr, dataBytes);
-				dataHeap.set(array);
-
-				var args = [dataPtr, dataBytes];
-				Runtime.dynCall('vii', MsgRcvd, args);
-			});
-			reader.readAsArrayBuffer(e.data);
-		}
-		else if (e.data instanceof ArrayBuffer)
+		// Groove should only ever send and receive ArrayBuffers
+		if (e.data instanceof ArrayBuffer)
 		{
 			var array = new Uint8Array(e.data);
-			
-			var dataBytes = array.length * array.BYTES_PER_ELEMENT;
-				var dataPtr = Module._malloc(dataBytes);
-				var dataHeap = new Uint8Array(Module.HEAPU8.buffer, dataPtr, dataBytes);
-				dataHeap.set(array);
+			var buffer = _malloc(array.byteLength);
+			HEAPU8.set(array, buffer);
 
-				var args = [dataPtr, dataBytes];
-				Runtime.dynCall('vii', MsgRcvd, args);
-		}
-		else if(typeof e.data === "string") {
-			var reader = new FileReader();
-			reader.addEventListener("loadend", function() {
-				var array = new Uint8Array(reader.result);
-
-				var dataBytes = array.length * array.BYTES_PER_ELEMENT;
-				var dataPtr = Module._malloc(dataBytes);
-				var dataHeap = new Uint8Array(Module.HEAPU8.buffer, dataPtr, dataBytes);
-				dataHeap.set(array);
-
-				var args = [dataPtr, dataBytes];
-				Runtime.dynCall('vii', MsgRcvd, args);
-			});
-			var blob = new Blob([e.data]);
-			reader.readAsArrayBuffer(blob);
+			var args = [buffer, array.byteLength];
+			console.log("calling native code");
+			Runtime.dynCall('vii', MsgRcvd, args);
 		}
 	};
 
