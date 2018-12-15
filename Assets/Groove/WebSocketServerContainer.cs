@@ -92,19 +92,21 @@ namespace Mirror.Groove
 		public void StartServer(string address, int port, int maxConnections)
 		{
 #if !UNITY_WEBGL || UNITY_EDITOR
-			string scheme = UseSecureServer ? "wss://" : "ws://";
-			if (string.IsNullOrEmpty(address))
-			{
-				address = "0.0.0.0";
-			}
+			//string scheme = UseSecureServer ? "wss://" : "ws://";
+			//if (string.IsNullOrEmpty(address))
+			//{
+			//	address = "0.0.0.0";
+			//}
 
-			Uri uri = new System.UriBuilder(scheme, address, port).Uri;
-			if (Mirror.LogFilter.Debug)
-			{
-				Debug.Log("attempting to start WebSocket server on: " + uri.ToString());
-			}
+			//Uri uri = new System.UriBuilder(scheme, address, port).Uri;
+			//if (Mirror.LogFilter.Debug)
+			//{
+			//	Debug.Log("attempting to start WebSocket server on: " + uri.ToString());
+			//}
 			MaxConnections = maxConnections;
-			WebsocketServer = new WebSocketServer(uri.ToString());
+			//WebsocketServer = new WebSocketServer(uri.ToString());
+			//WebsocketServer = new WebSocketServer(port);
+			WebsocketServer = new WebSocketServer(port, UseSecureServer);
 
 			WebsocketServer.AddWebSocketService<MirrorWebSocketBehavior>("/game", (behaviour) =>
 			{
