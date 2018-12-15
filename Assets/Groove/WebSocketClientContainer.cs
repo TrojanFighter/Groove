@@ -1,76 +1,76 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Mirror.Groove
 {
 	public class WebSocketClientContainer
 	{
-		public WebSocketClient ClientInterface;
+		protected WebSocket ClientInterface;
 
-		public bool SocketConnected { get { return ClientInterface != null && ClientInterface.Connected; } }
+		public bool UseSecureClient = false;
 
-		[SerializeField]
-		private bool UseSecureClient = false;
-
-		private bool ClientConnectedLastFrame = false;
-
-		public event Action OnClientConnect;
-		public event Action<byte[]> OnClientData;
-		public event Action<Exception> OnClientError;
-		public event Action OnClientDisconnect;
-
-		public void Connect(string address, int port)
+		public bool Connected
 		{
-			WebSocketClient.OnClientData += WebSocketClient_OnClientData;
-			WebSocketClient.OnClientConnect += WebSocketClient_OnClientConnect;
-			WebSocketClient.OnClientDisconnect += WebSocketClient_OnClientDisconnect;
-			WebSocketClient.OnClientError += WebSocketClient_OnClientError;
-			ConnectInternal(address, port);
-			
-			if (LogFilter.Debug)
+			get
 			{
-				Debug.Log("WebSocket client connected");
+				return WebSocket.SocketConnected;
 			}
 		}
 
-		private void WebSocketClient_OnClientError(Exception obj)
-		{
-			OnClientError.Invoke(obj);
-		}
+		#region Client Events
+		public event System.Action OnClientConnect;
+		public event System.Action<byte[]> OnClientData;
+		public event System.Action<System.Exception> OnClientError;
+		public event System.Action OnClientDisconnect;
+		#endregion
 
-		private void WebSocketClient_OnClientDisconnect()
+		public void ClientSend(byte[] data)
 		{
-			OnClientDisconnect.Invoke();
-		}
-
-		private void WebSocketClient_OnClientConnect()
-		{
-			OnClientConnect.Invoke();
-		}
-
-		private void WebSocketClient_OnClientData(byte[] obj)
-		{
-			OnClientData.Invoke(obj);
-		}
-
-		private void ConnectInternal(string address, int port)
-		{
-			string scheme = UseSecureClient ? "wss://" : "ws://";
-
-			Uri uri = new System.UriBuilder(scheme, address, port, "game").Uri;
-			if (Mirror.LogFilter.Debug)
-			{
-				Debug.Log("attempting to start client on: " + uri.ToString());
-			}
-			ClientInterface = new WebSocketClient(uri);
-			ClientInterface.Connect();
+			ClientInterface.Send(data);
 		}
 
 		public void Disconnect()
 		{
 			ClientInterface.Close();
+			ClientInterface = null;
+		}
+
+		public void Connect(System.Uri address)
+		{
+			var Adr = new System.UriBuilder(address);
+			Adr.Path += "game";
+			Adr.Scheme = UseSecureClient ? "wss://" : "ws://";
+			ClientInterface = new WebSocket(Adr.Uri);
+			BindClientEvents();
+			Debug.Log("connecting to: " + Adr.Uri.ToString());
+			ClientInterface.Connect();
+		}
+
+		private void BindClientEvents()
+		{
+			WebSocket.OnClientConnect += ClientInterface_OnClientConnect;
+			WebSocket.OnClientData += ClientInterface_OnClientData;
+			WebSocket.OnClientDisconnect += ClientInterface_OnClientDisconnect;
+			WebSocket.OnClientError += ClientInterface_OnClientError;
+		}
+
+		private void ClientInterface_OnClientError(System.Exception obj)
+		{
+			OnClientError.Invoke(obj);
+		}
+
+		private void ClientInterface_OnClientDisconnect()
+		{
+			OnClientDisconnect.Invoke();
+		}
+
+		private void ClientInterface_OnClientData(byte[] obj)
+		{
+			OnClientData.Invoke(obj);
+		}
+
+		private void ClientInterface_OnClientConnect()
+		{
+			OnClientConnect.Invoke();
 		}
 	}
 }

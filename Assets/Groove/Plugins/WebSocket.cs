@@ -1,31 +1,91 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Collections;
 using UnityEngine;
 using System.Runtime.InteropServices;
-using AOT;
 
-public class WebSocketClient
+public class WebSocket
 {
-	private Uri mUrl;
+	private System.Uri mUrl;
 
-	#region Client Events
-	public static event Action OnClientConnect;
-	public static event Action<byte[]> OnClientData;
-	public static event Action<Exception> OnClientError;
-	public static event Action OnClientDisconnect;
-	#endregion
-
-	public WebSocketClient(Uri url)
+	public WebSocket(System.Uri url)
 	{
 		mUrl = url;
-		Debug.Log(mUrl);
 
 		string protocol = mUrl.Scheme;
 		if (!protocol.Equals("ws") && !protocol.Equals("wss"))
-			throw new ArgumentException("Unsupported protocol: " + protocol);
+			throw new System.ArgumentException("Unsupported protocol: " + protocol);
 	}
+
+	public static bool SocketConnected = false;
+
+	#region Client Events
+	public static event System.Action OnClientConnect;
+	public static event System.Action<byte[]> OnClientData;
+	public static event System.Action<System.Exception> OnClientError;
+	public static event System.Action OnClientDisconnect;
+	#endregion
+
+	#region Unity Callback Types
+	public delegate void SingleIntCallback(System.IntPtr ptr);
+
+	public delegate void TwoIntCallback(System.IntPtr ptr, System.IntPtr Length);
+
+	public delegate void SimpleCallback();
+	#endregion
+
+	#region JSLIB Imports
+	[DllImport("__Internal")]
+	private static extern int SocketCreate (string url, SimpleCallback Connected, TwoIntCallback DataReceived, SingleIntCallback Error, SimpleCallback Disconnected);
+
+	[DllImport("__Internal")]
+	private static extern int SocketState (int socketInstance);
+
+	[DllImport("__Internal")]
+	private static extern void SocketSend (int socketInstance, byte[] ptr, int length);
+
+	[DllImport("__Internal")]
+	private static extern void SocketClose (int socketInstance);
+
+	[DllImport("__Internal")]
+	private static extern int SocketError (int socketInstance, byte[] ptr, int length);
+	#endregion
+
+	#region Unity Callbacks
+	[AOT.MonoPInvokeCallback(typeof(SimpleCallback))]
+	public static void Connected()
+	{
+		SocketConnected = true;
+		Debug.Log("connected callback received by Unity");
+		OnClientConnect.Invoke();
+	}
+
+	[AOT.MonoPInvokeCallback(typeof(TwoIntCallback))]
+	public static void Data(System.IntPtr ptr, System.IntPtr Length)
+	{
+		Debug.Log("Data callback received by Unity");
+		var L = Length.ToInt32();
+		byte[] msg = new byte[L];
+		Marshal.Copy(ptr, msg, 0, L);
+		OnClientData.Invoke(msg);
+	}
+
+	[AOT.MonoPInvokeCallback(typeof(SingleIntCallback))]
+	public static void ErrorCallback(System.IntPtr Err)
+	{
+		OnClientError.Invoke(new System.Exception("WebSocket Error Code: " + Err));
+	}
+
+	[AOT.MonoPInvokeCallback(typeof(SimpleCallback))]
+	public static void DisconnectedCallback()
+	{
+		SocketConnected = false;
+		OnClientDisconnect.Invoke();
+	}
+	#endregion
 
 	int m_NativeRef = 0;
 
@@ -36,125 +96,67 @@ public class WebSocketClient
 
 	public void Connect()
 	{
-		m_NativeRef = SocketCreate(mUrl.ToString(), MsgRcvdCallback, CtdCallback, DisctdCallback, ErrorCbk);
+		Debug.Log("Initiating JS Layer connecting to: " + mUrl.ToString());
+		m_NativeRef = SocketCreate(mUrl.ToString(), Connected, Data, ErrorCallback, DisconnectedCallback);
 	}
  
-	public bool Connected 
-	{
-		get
-		{
-			return SocketState(m_NativeRef) != 0;
-		}
-	}
-
 	public void Close()
 	{
 		SocketClose(m_NativeRef);
+		SocketConnected = false;
 	}
 
-	#region WebGL Callbacks
-	public delegate void MessageRecvCallback(System.IntPtr ptr, System.IntPtr Length);
-
-	[MonoPInvokeCallback(typeof(MessageRecvCallback))]
-	public void MsgRcvdCallback(System.IntPtr ptr, System.IntPtr Length)
+	public string error
 	{
-		int ReadLength = Length.ToInt32();
-		byte[] msg = new byte[ReadLength];
-		Debug.Log("Got data of: " + ReadLength);
-		Marshal.Copy(ptr, msg, 0, ReadLength);
-		OnClientData.Invoke(msg);
+		get {
+			const int bufsize = 1024;
+			byte[] buffer = new byte[bufsize];
+			int result = SocketError (m_NativeRef, buffer, bufsize);
+
+			if (result == 0)
+				return null;
+
+			return Encoding.UTF8.GetString (buffer);				
+		}
 	}
 
-	public delegate void ConnectedCallback();
+	//WebSocketSharp.WebSocket m_Socket;
+	//bool m_IsConnected = false;
+	//string m_Error = null;
 
-	[MonoPInvokeCallback(typeof(ConnectedCallback))]
-	public void CtdCallback()
-	{
-		OnClientConnect.Invoke();
-	}
+	//public IEnumerator Connect()
+	//{
+	//	m_Socket = new WebSocketSharp.WebSocket(mUrl.ToString());
+	//	m_Socket.OnMessage += (sender, e) => OnClientData(e.RawData);
+	//	m_Socket.OnOpen += (sender, e) => OnConnect();
+	//	m_Socket.OnError += (sender, e) => OnClientError(e.Exception);
+	//	m_Socket.OnClose += (sender, e) => OnClientDisconnect.Invoke();
+	//	m_Socket.ConnectAsync();
+	//	while (!m_IsConnected && m_Error == null)
+	//		yield return 0;
+	//}
 
-	public delegate void DisconnectedCallback();
+	//private void OnConnect()
+	//{
+	//	m_IsConnected = true;
+	//	OnClientConnect.Invoke();
+	//}
 
-	[MonoPInvokeCallback(typeof(DisconnectedCallback))]
-	public void DisctdCallback()
-	{
-		OnClientDisconnect.Invoke();
-	}
+	//public void Send(byte[] buffer)
+	//{
+	//	m_Socket.Send(buffer);
+	//}
 
-	public delegate void ErrorCallback(System.IntPtr ErrorCode);
+	//public void Close()
+	//{
+	//	m_Socket.Close();
+	//}
 
-	[MonoPInvokeCallback(typeof(ErrorCallback))]
-	public void ErrorCbk(System.IntPtr Code)
-	{
-		OnClientError.Invoke(new System.Exception("WebSocket Close Code: " + Code.ToString()));
-	}
-	#endregion
-
-	#region WebGL Imports
-	[DllImport("__Internal")]
-	private static extern int SocketCreate(string url, MessageRecvCallback action, ConnectedCallback ConnectedAction, DisconnectedCallback DisconnectedAction, ErrorCallback ErrorAction);
-
-	[DllImport("__Internal")]
-	private static extern int SocketState(int socketInstance);
-
-	[DllImport("__Internal")]
-	private static extern void SocketSend(int socketInstance, byte[] ptr, int length);
-
-	[DllImport("__Internal")]
-	private static extern void SocketClose(int socketInstance);
-	#endregion
-
-
-	//	WebSocketSharp.WebSocket m_Socket;
-	//	WebSocketSharp.Server.WebSocketServer m_Server;
-	//	Queue<byte[]> m_Messages = new Queue<byte[]>();
-	//	string m_Error = null;
-
-	//	bool m_IsConnected = false;
-
-	//	public bool Connected
-	//	{
-	//		get {
-	//			return m_IsConnected;
-	//		}
+	//public string error
+	//{
+	//	get {
+	//		return m_Error;
 	//	}
+	//}
 
-	//	public void Connect()
-	//	{
-	//		m_Socket = new WebSocketSharp.WebSocket(mUrl.ToString());
-	//		m_Socket.OnMessage += (sender, e) => { lock (m_Messages) { m_Messages.Enqueue(e.RawData); } };
-	//		m_Socket.OnOpen += (sender, e) => m_IsConnected = true;
-	//		m_Socket.OnError += (sender, e) => m_Error = e.Message;
-	//		m_Socket.Connect();
-	//	}
-
-	//	public void Send(byte[] buffer)
-	//	{
-	//		m_Socket.Send(buffer);
-	//	}
-
-	//	public byte[] Recv()
-	//	{
-	//		lock (m_Messages)
-	//		{
-	//			if (m_Messages.Count == 0)
-	//				return null;
-	//			return m_Messages.Dequeue();
-	//		}
-	//	}
-
-	//	public void Close()
-	//	{
-	//		m_IsConnected = false;
-	//		m_Socket.Close();
-	//	}
-
-	//	public string error
-	//	{
-	//		get {
-	//			return m_Error;
-	//		}
-	//	}
-
-	//#endif 
 }

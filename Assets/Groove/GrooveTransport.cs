@@ -1,41 +1,42 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 namespace Mirror.Groove
 {
 	public class GrooveTransport : TransportLayer
 	{
-
-		public WebSocketClientContainer Client = new WebSocketClientContainer();
-
-		public WebSocketServerContainer Server = new WebSocketServerContainer();
-
-		// events for the client
+		#region Client Events
 		public event Action OnClientConnect;
 		public event Action<byte[]> OnClientData;
 		public event Action<Exception> OnClientError;
 		public event Action OnClientDisconnect;
+		#endregion
 
-		// events for the server
+		#region Server Events
 		public event Action<int> OnServerConnect;
 		public event Action<int, byte[]> OnServerData;
 		public event Action<int, Exception> OnServerError;
 		public event Action<int> OnServerDisconnect;
+		#endregion
 
-		public GrooveTransport()
-		{
-
-		}
+		protected WebSocketServerContainer Server = new WebSocketServerContainer();
+		protected WebSocketClientContainer Client = new WebSocketClientContainer();
 
 		public void ClientConnect(string address, int port)
+		{
+			BindClientEvents();
+			var Address = new System.UriBuilder(address)
+			{
+				Port = port
+			};
+			Client.Connect(Address.Uri);
+		}
+
+		private void BindClientEvents()
 		{
 			Client.OnClientConnect += Client_OnClientConnect;
 			Client.OnClientData += Client_OnClientData;
 			Client.OnClientDisconnect += Client_OnClientDisconnect;
 			Client.OnClientError += Client_OnClientError;
-			Client.Connect(address, port);
 		}
 
 		private void Client_OnClientError(Exception obj)
@@ -48,51 +49,65 @@ namespace Mirror.Groove
 			OnClientDisconnect.Invoke();
 		}
 
+		private void Client_OnClientData(byte[] obj)
+		{
+			OnClientData.Invoke(obj);
+		}
+
 		private void Client_OnClientConnect()
 		{
 			OnClientConnect.Invoke();
 		}
 
-		private void Client_OnClientData(byte[] obj)
-		{
-			OnClientData(obj);
-		}
-
 		public bool ClientConnected()
 		{
-			return Client.SocketConnected;
+			return Client.Connected;
 		}
 
-		public virtual void ClientDisconnect()
+		public void ClientDisconnect()
 		{
 			Client.Disconnect();
+		}
+
+		public void ClientSend(int channelId, byte[] data)
+		{
+			Client.ClientSend(data);
 		}
 
 		public bool GetConnectionInfo(int connectionId, out string address)
 		{
 #if !UNITY_WEBGL || UNITY_EDITOR
 			return Server.GetConnectionInfo(connectionId, out address);
-#else
+#endif
 			address = "";
 			return false;
-#endif
 		}
 
-		public virtual bool ServerActive()
+		public int GetMaxPacketSize(int channelId = 0)
+		{
+			return int.MaxValue;
+		}
+
+		public bool ServerActive()
 		{
 #if !UNITY_WEBGL || UNITY_EDITOR
 			return Server.ServerActive;
-#else
-			return false;
 #endif
+			return false;
 		}
 
-		public virtual bool ServerDisconnect(int connectionId)
+		public bool ServerDisconnect(int connectionId)
 		{
 #if !UNITY_WEBGL || UNITY_EDITOR
-			return Server.RemoveConnectionId(connectionId);
-#else
+			return Server.Disconnect(connectionId);
+#endif
 			return false;
+		}
+
+		public void ServerSend(int connectionId, int channelId, byte[] data)
+		{
+#if !UNITY_WEBGL || UNITY_EDITOR
+			Server.Send(connectionId, data);
 #endif
 		}
 
@@ -101,8 +116,6 @@ namespace Mirror.Groove
 #if !UNITY_WEBGL || UNITY_EDITOR
 			BindServerEvents();
 			Server.StartServer(address, port, maxConnections);
-#else
-			Debug.LogError("DoN't StArT tHe SeRvEr On WeBgL");
 #endif
 		}
 
@@ -111,11 +124,34 @@ namespace Mirror.Groove
 #if !UNITY_WEBGL || UNITY_EDITOR
 			BindServerEvents();
 			Server.StartServer(address, port, maxConnections);
-#else
-			Debug.LogError("DoN't StArT tHe SeRvEr On WeBgL");
 #endif
 		}
 
+		public void ServerStop()
+		{
+#if !UNITY_WEBGL || UNITY_EDITOR
+			if (Server.ServerActive)
+			{
+				Server.StopServer();
+			}
+#endif
+		}
+
+		public void Shutdown()
+		{
+#if !UNITY_WEBGL || UNITY_EDITOR
+			if (Server.ServerActive)
+			{
+				Server.StopServer();
+			}
+#endif
+			if (Client.Connected)
+			{
+				Client.Disconnect();
+			}
+		}
+
+		#region Standalone Only Code (Server Only)
 #if !UNITY_WEBGL || UNITY_EDITOR
 		private void BindServerEvents()
 		{
@@ -124,16 +160,10 @@ namespace Mirror.Groove
 			Server.OnServerDisconnect += Server_OnServerDisconnect;
 			Server.OnServerError += Server_OnServerError;
 		}
-#endif
 
-		private void Server_OnServerError(int arg1, Exception arg2)
+		private void Server_OnServerConnect(int obj)
 		{
-			OnServerError.Invoke(arg1, arg2);
-		}
-
-		private void Server_OnServerDisconnect(int obj)
-		{
-			OnServerDisconnect.Invoke(obj);
+			OnServerConnect.Invoke(obj);
 		}
 
 		private void Server_OnServerData(int arg1, byte[] arg2)
@@ -141,55 +171,16 @@ namespace Mirror.Groove
 			OnServerData.Invoke(arg1, arg2);
 		}
 
-		private void Server_OnServerConnect(int obj)
+		private void Server_OnServerDisconnect(int obj)
 		{
-			OnServerConnect.Invoke(obj);
+			OnServerDisconnect.Invoke(obj);
 		}
 
-		public void ServerStop()
+		private void Server_OnServerError(int arg1, Exception arg2)
 		{
-#if !UNITY_WEBGL || UNITY_EDITOR
-			Server.StopServer();
+			OnServerError.Invoke(arg1, arg2);
+		}
 #endif
-		}
-
-		public void Shutdown()
-		{
-			if (Client != null)
-			{
-				if (Client.SocketConnected)
-				{
-					Client.Disconnect();
-				}
-			}
-#if !UNITY_WEBGL || UNITY_EDITOR
-			if (Server != null)
-			{
-				if (Server.ServerActive)
-				{
-					Server.StopServer();
-				}
-			}
-#endif
-		}
-
-		public int GetMaxPacketSize(int channelId = 0)
-		{
-			return int.MaxValue;
-		}
-
-		public virtual void ClientSend(int channelId, byte[] data)
-		{
-			Client.ClientInterface.Send(data);
-		}
-
-		public virtual void ServerSend(int connectionId, int channelId, byte[] data)
-		{
-#if !UNITY_WEBGL || UNITY_EDITOR
-			Debug.Log("Sending data");
-			Server.Send(connectionId, data);
-#else
-#endif
-		}
+		#endregion
 	}
 }

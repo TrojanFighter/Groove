@@ -1,49 +1,61 @@
 var LibraryWebSockets = {
 $webSocketInstances: [],
 
-SocketCreate: function(url, MsgRcvd, ConnectedCallback, DisconnectedCallback, ErrorCallback)
+SocketCreate: function(url, ConnectedCallback, DataReceived, ErrorCallback, DisconnectedCallback)
 {
 	var str = Pointer_stringify(url);
+	console.log("connecting to: "+str+"in JS layer");
 	var socket = {
 		socket: new WebSocket(str),
 		buffer: new Uint8Array(0),
-		error: null
+		error: null,
+		messages: []
 	}
 
 	socket.socket.binaryType = 'arraybuffer';
 
 	socket.socket.onopen = function(e){
-		console.log("connected web socket");
+		console.log("connected successfully in JS layer");
 		Runtime.dynCall('v', ConnectedCallback, 0);
-		console.log("dispatched");
-	};
+		console.log("dispatched back to JS layer");
+	}
 
 	socket.socket.onmessage = function (e) {
-		console.log("received data");
-		// Groove should only ever send and receive ArrayBuffers
-		if (e.data instanceof ArrayBuffer)
+		console.log("Received data");
+		if (e.data instanceof Blob)
+		{
+			var reader = new FileReader();
+			reader.addEventListener("loadend", function() {
+				var array = new Uint8Array(reader.result);
+				RaiseMirrorData(array);
+			});
+			reader.readAsArrayBuffer(e.data);
+		}
+		else if (e.data instanceof ArrayBuffer)
 		{
 			var array = new Uint8Array(e.data);
-			var buffer = _malloc(array.byteLength);
-			HEAPU8.set(array, buffer);
-
-			var args = [buffer, array.byteLength];
-			console.log("calling native code");
-			Runtime.dynCall('vii', MsgRcvd, args);
+			RaiseMirrorData(array);
 		}
-	};
+	}
 
 	socket.socket.onclose = function (e) {
 		if (e.code != 1000)
 		{
 			Runtime.dynCall('vi', ErrorCallback, [e.code]);
 		}
-		else{
-			Runtime.dynCall('v', DisconnectedCallback, 0);
-		}
+		Runtime.dynCall('v', DisconnectedCallback, 0);
 	}
 	var instance = webSocketInstances.push(socket) - 1;
 	return instance;
+
+	function RaiseMirrorData(array){
+		var buffer = _malloc(array.byteLength);
+		HEAPU8.set(array, buffer);
+
+		var args = [buffer, array.byteLength];
+		console.log("calling native code");
+		Runtime.dynCall('vii', DataReceived, args);
+	}
 },
 
 SocketState: function (socketInstance)
@@ -64,7 +76,6 @@ SocketError: function (socketInstance, ptr, bufsize)
 
 SocketSend: function (socketInstance, ptr, length)
 {
-	console.log("sending data");
 	var socket = webSocketInstances[socketInstance];
 	socket.socket.send (HEAPU8.buffer.slice(ptr, ptr+length));
 },
