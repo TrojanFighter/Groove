@@ -275,7 +275,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 292484271}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 972073135, guid: 16d2ab6ef1bfe324fa0f7da64cb2275c, type: 3}
+  m_Script: {fileID: 11500000, guid: 41f84591ce72545258ea98cb7518d8b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!4 &292484273
@@ -401,7 +401,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 783451647}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 972073135, guid: 16d2ab6ef1bfe324fa0f7da64cb2275c, type: 3}
+  m_Script: {fileID: 11500000, guid: 41f84591ce72545258ea98cb7518d8b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!4 &783451649
@@ -427,6 +427,7 @@ GameObject:
   - component: {fileID: 1056211496}
   - component: {fileID: 1056211495}
   - component: {fileID: 1056211497}
+  - component: {fileID: 1056211498}
   m_Layer: 0
   m_Name: GrooveNetworkManager
   m_TagString: Untagged
@@ -445,22 +446,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 102c92ab3f74f354db0c8b2ba99c0be4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_NetworkPort: 7777
-  m_ServerBindToIP: 0
-  m_ServerBindAddress: localhost
-  m_NetworkAddress: localhost
-  m_DontDestroyOnLoad: 1
-  m_RunInBackground: 1
-  m_ShowDebugMessages: 1
-  m_PlayerPrefab: {fileID: 1624238096841884, guid: 5f2ae782c94c26345b1c45562d5b1442,
+  networkAddress: localhost
+  dontDestroyOnLoad: 1
+  runInBackground: 1
+  showDebugMessages: 1
+  playerPrefab: {fileID: 1717666031659992, guid: 727baf08ed0741e459a0ff30ec659808,
     type: 2}
-  m_AutoCreatePlayer: 1
-  m_PlayerSpawnMethod: 0
-  m_OfflineScene: 
-  m_OnlineScene: 
-  m_SpawnPrefabs: []
-  m_MaxConnections: 4
-  m_UseWebSockets: 1
+  autoCreatePlayer: 1
+  playerSpawnMethod: 0
+  offlineScene: 
+  onlineScene: 
+  maxConnections: 4
+  spawnPrefabs: []
+  startOnHeadless: 1
+  clientLoadedScene: 0
   isNetworkActive: 0
 --- !u!4 &1056211496
 Transform:
@@ -483,7 +482,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 1056211494}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 1606126427, guid: 16d2ab6ef1bfe324fa0f7da64cb2275c, type: 3}
+  m_Script: {fileID: 11500000, guid: a6838d01a77c3994fa2a18997e22212f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1056211498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1056211494}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6442dc8070ceb41f094e44de0bf87274, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   showGUI: 1
@@ -513,7 +523,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1337319941}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 972073135, guid: 16d2ab6ef1bfe324fa0f7da64cb2275c, type: 3}
+  m_Script: {fileID: 11500000, guid: 41f84591ce72545258ea98cb7518d8b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!4 &1337319943
@@ -553,7 +563,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1735376877}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 972073135, guid: 16d2ab6ef1bfe324fa0f7da64cb2275c, type: 3}
+  m_Script: {fileID: 11500000, guid: 41f84591ce72545258ea98cb7518d8b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!4 &1735376879

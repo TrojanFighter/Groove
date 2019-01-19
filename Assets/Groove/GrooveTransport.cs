@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Mirror.Groove
 {
-	public class GrooveTransport : TransportLayer
+	public class GrooveTransport : MonoBehaviour, ITransport
 	{
 
 		public WebSocketClientContainer Client = new WebSocketClientContainer();
@@ -13,11 +13,6 @@ namespace Mirror.Groove
 		public WebSocketServerContainer Server = new WebSocketServerContainer();
 
 #endif
-
-		public void ClientConnect(string address, int port)
-		{
-			Client.Connect(address, port);
-		}
 
 		public bool ClientConnected()
 		{
@@ -126,24 +121,6 @@ namespace Mirror.Groove
 #endif
 		}
 
-		public void ServerStart(string address, int port, int maxConnections)
-		{
-#if !UNITY_WEBGL || UNITY_EDITOR
-			Server.StartServer(address, port, maxConnections);
-#else
-			Debug.LogError("DoN't StArT tHe SeRvEr On WeBgL");
-#endif
-		}
-
-		public void ServerStartWebsockets(string address, int port, int maxConnections)
-		{
-#if !UNITY_WEBGL || UNITY_EDITOR
-			Server.StartServer(address, port, maxConnections);
-#else
-			Debug.LogError("DoN't StArT tHe SeRvEr On WeBgL");
-#endif
-		}
-
 		public void ServerStop()
 		{
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -179,6 +156,20 @@ namespace Mirror.Groove
 		public int GetMaxPacketSize(int channelId = 0)
 		{
 			return int.MaxValue;
+		}
+
+		public void ClientConnect(string address)
+		{
+			Client.Connect(address);
+		}
+
+		public void ServerStart()
+		{
+#if !UNITY_WEBGL || UNITY_EDITOR
+			Server.StartServer();
+#else
+			Debug.LogError("DoN't StArT tHe SeRvEr On WeBgL");
+#endif
 		}
 	}
 }

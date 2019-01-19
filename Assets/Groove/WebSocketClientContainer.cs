@@ -16,25 +16,26 @@ namespace Mirror.Groove
 
 		private bool ClientConnectedLastFrame = false;
 
-		public void Connect(string address, int port)
+		public void Connect(string address)
 		{
-			ConnectInternal(address, port);
+			ConnectInternal(address);
 			if (LogFilter.Debug)
 			{
 				Debug.Log("WebSocket client connected");
 			}
 		}
 
-		private void ConnectInternal(string address, int port)
+		private void ConnectInternal(string address)
 		{
 			string scheme = UseSecureClient ? "wss://" : "ws://";
 
-			Uri uri = new System.UriBuilder(scheme, address, port, "game").Uri;
+			var uri = new System.UriBuilder(scheme, address);
+			uri.Path += "game";
 			if (Mirror.LogFilter.Debug)
 			{
 				Debug.Log("attempting to start client on: " + uri.ToString());
 			}
-			ClientInterface = new WebSocketClient(uri);
+			ClientInterface = new WebSocketClient(uri.Uri);
 			ClientInterface.Connect();
 		}
 

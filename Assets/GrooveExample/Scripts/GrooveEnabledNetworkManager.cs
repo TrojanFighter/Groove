@@ -16,12 +16,12 @@ namespace GrooveExample
 			}
 		}
 
-		public override void InitializeTransport()
-		{
-			// Use this if you are smart:
-			Transport.layer = new GrooveTransport();
-			// Use this if you want to go insane:
-			//Transport.layer = new LLAPITransport();
-		}
+		//public override void InitializeTransport()
+		//{
+		//	// Use this if you are smart:
+		//	Transport.layer = new GrooveTransport();
+		//	// Use this if you want to go insane:
+		//	//Transport.layer = new LLAPITransport();
+		//}
 	}
 }
