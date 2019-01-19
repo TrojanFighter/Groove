@@ -3,7 +3,7 @@
 --- !u!129 &1
 PlayerSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 14
+  serializedVersion: 15
   productGUID: 83fc7c665a0f44749b31f4c2de58cee0
   AndroidProfiler: 0
   AndroidFilterTouchesWhenObscured: 0
@@ -244,7 +244,7 @@ PlayerSettings:
   tvOSManualSigningProvisioningProfileID: 
   appleEnableAutomaticSigning: 0
   clonedFromGUID: 058bf22ef64a543b0a8897be2dc28128
-  AndroidTargetDevice: 0
+  AndroidTargetArchitectures: 5
   AndroidSplashScreenScale: 0
   androidSplashScreen: {fileID: 0}
   AndroidKeystoreName: 
