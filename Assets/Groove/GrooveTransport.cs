@@ -6,6 +6,16 @@ namespace Mirror.Groove
 {
 	public class GrooveTransport : MonoBehaviour, ITransport
 	{
+		public int Port = 7777;
+
+		[SerializeField]
+		private bool SecureServer = false;
+
+		[SerializeField]
+		private string PathToCertificate = "/../certificate.pfx";
+
+		[SerializeField]
+		private string CertificatePassword = "FillMeOut";
 
 		public WebSocketClientContainer Client = new WebSocketClientContainer();
 
@@ -160,13 +170,21 @@ namespace Mirror.Groove
 
 		public void ClientConnect(string address)
 		{
-			Client.Connect(address);
+			Client.Connect(address, Port, SecureServer);
 		}
 
 		public void ServerStart()
 		{
 #if !UNITY_WEBGL || UNITY_EDITOR
-			Server.StartServer();
+			if (SecureServer)
+			{
+				Server.StartServer(Port, PathToCertificate, CertificatePassword);
+			}
+			else
+			{
+				Server.StartServer(Port);
+			}
+			
 #else
 			Debug.LogError("DoN't StArT tHe SeRvEr On WeBgL");
 #endif

@@ -11,25 +11,22 @@ namespace Mirror.Groove
 
 		public bool SocketConnected { get { return ClientInterface != null && ClientInterface.Connected; } }
 
-		[SerializeField]
-		private bool UseSecureClient = false;
-
 		private bool ClientConnectedLastFrame = false;
 
-		public void Connect(string address)
+		public void Connect(string address, int port, bool UseSecureClient)
 		{
-			ConnectInternal(address);
+			ConnectInternal(address, port, UseSecureClient);
 			if (LogFilter.Debug)
 			{
 				Debug.Log("WebSocket client connected");
 			}
 		}
 
-		private void ConnectInternal(string address)
+		private void ConnectInternal(string address, int port, bool UseSecureClient)
 		{
 			string scheme = UseSecureClient ? "wss://" : "ws://";
 
-			var uri = new System.UriBuilder(scheme, address);
+			var uri = new System.UriBuilder(scheme, address, port);
 			uri.Path += "game";
 			if (Mirror.LogFilter.Debug)
 			{

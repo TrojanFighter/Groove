@@ -24,10 +24,6 @@ namespace Mirror.Groove
 #if !UNITY_WEBGL || UNITY_EDITOR
 		WebSocketServer WebsocketServer;
 
-		private readonly bool UseSecureServer = false;
-		private readonly string CertificatePassword = "FillMeOutPlease";
-		private string PathInDataToCertificate = "/../certificate.pfx";
-
 		readonly Dictionary<int, IWebSocketSession> WebsocketSessions = new Dictionary<int, IWebSocketSession>();
 		public int MaxConnections { get; private set; }
 
@@ -128,19 +124,24 @@ namespace Mirror.Groove
 		}
 
 
-		public void StartServer()
+		public void StartServer(int Port = 7777, string PathToCert = "", string CertPassword = "")
 		{
 #if !UNITY_WEBGL || UNITY_EDITOR
-			WebsocketServer = new WebSocketServer();
+			bool SecureServer = false;
+			if (PathToCert != "" && CertPassword != "")
+			{
+				SecureServer = true;
+			}
+			WebsocketServer = new WebSocketServer(Port, SecureServer);
 			WebsocketServer.AddWebSocketService<MirrorWebSocketBehavior>("/game", (behaviour) =>
 			{
 				behaviour.Server = this;
 				behaviour.connectionId = NextId();
 			});
 
-			if (UseSecureServer)
+			if (SecureServer)
 			{
-				WebsocketServer.SslConfiguration.ServerCertificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(Application.dataPath + PathInDataToCertificate, CertificatePassword);
+				WebsocketServer.SslConfiguration.ServerCertificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(Application.dataPath + PathToCert, CertPassword);
 			}
 			WebsocketServer.Start();
 #else
