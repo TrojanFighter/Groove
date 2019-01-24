@@ -443,15 +443,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 1056211494}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 102c92ab3f74f354db0c8b2ba99c0be4, type: 3}
+  m_Script: {fileID: 11500000, guid: 8aab4c8111b7c411b9b92cf3dbc5bd4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   networkAddress: localhost
   dontDestroyOnLoad: 1
   runInBackground: 1
-  showDebugMessages: 1
+  showDebugMessages: 0
   playerPrefab: {fileID: 1717666031659992, guid: 727baf08ed0741e459a0ff30ec659808,
-    type: 2}
+    type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 0
   offlineScene: 
@@ -485,6 +485,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6838d01a77c3994fa2a18997e22212f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Port: 7777
+  SecureServer: 0
+  PathToCertificate: /../certificate.pfx
+  CertificatePassword: FillMeOut
 --- !u!114 &1056211498
 MonoBehaviour:
   m_ObjectHideFlags: 0
