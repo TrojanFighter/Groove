@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Users\MusketeerOrder\.Rider2018.2\config\extensions" t="IncludeRecursive" />
+    <e p="C:\Users\MusketeerOrder\.Rider2018.2\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\MusketeerOrder\.Rider2018.2\system\resharper-host\Local\Transient\ReSharperHost\v182\SolutionCaches\_GGJ2019MirrorGroove1.-1152301311.00" t="ExcludeRecursive" />
+    <e p="F:\UnityProjects\GGJ2019MirrorGroove1" t="IncludeRecursive">
+      <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
+      <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
+      <e p="Assets\Groove" t="Include">
+        <e p="Editor" t="Include">
+          <e p="TransportTest.cs" t="Include" />
+        </e>
+        <e p="GrooveTransport.cs" t="Include" />
+        <e p="MirrorWebSocketBehavior.cs" t="Include" />
+        <e p="Plugins" t="Include">
+          <e p="WebSocket.cs" t="Include" />
+        </e>
+        <e p="WebSocketClientContainer.cs" t="Include" />
+        <e p="WebSocketServerContainer.cs" t="Include" />
+      </e>
+      <e p="Assets\GrooveExample" t="Include">
+        <e p="Editor" t="Include">
+          <e p="QuickBuildBehaviour.cs" t="Include" />
+        </e>
+        <e p="Scripts" t="Include">
+          <e p="GrooveExamplePlayer.cs" t="Include" />
+          <e p="GrooveExamplePlayerController.cs" t="Include" />
+        </e>
+      </e>
+      <e p="Assets\Mirror" t="Include">
+        <e p="Components" t="Include">
+          <e p="NetworkAnimator.cs" t="Include" />
+          <e p="NetworkTransform.cs" t="Include" />
+          <e p="NetworkTransformBase.cs" t="Include" />
+          <e p="NetworkTransformChild.cs" t="Include" />
+        </e>
+        <e p="Editor" t="Include">
+          <e p="NetworkAnimatorEditor.cs" t="Include" />
+          <e p="NetworkBehaviourInspector.cs" t="Include" />
+          <e p="NetworkIdentityEditor.cs" t="Include" />
+          <e p="NetworkInformationPreview.cs" t="Include" />
+          <e p="NetworkManagerEditor.cs" t="Include" />
+          <e p="NetworkScenePostProcess.cs" t="Include" />
+        </e>
+        <e p="Examples" t="Include">
+          <e p="Basic" t="Include">
+            <e p="Scripts" t="Include">
+              <e p="Player.cs" t="Include" />
+            </e>
+          </e>
+          <e p="Movement" t="Include">
+            <e p="Models" t="Include">
+              <e p="(Public Domain) Quandtum BA-2" t="Include">
+                <e p="readme.txt" t="Include" />
+              </e>
+            </e>
+            <e p="Scripts" t="Include">
+              <e p="Move.cs" t="Include" />
+            </e>
+          </e>
+          <e p="Pong" t="Include">
+            <e p="Scripts" t="Include">
+              <e p="Ball.cs" t="Include" />
+              <e p="Player.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="License.txt" t="Include" />
+        <e p="readme.txt" t="Include" />
+        <e p="Runtime" t="Include">
+          <e p="ClientScene.cs" t="Include" />
+          <e p="CustomAttributes.cs" t="Include" />
+          <e p="DotNetCompatibility.cs" t="Include" />
+          <e p="ExponentialMovingAverage.cs" t="Include" />
+          <e p="Extensions.cs" t="Include" />
+          <e p="LocalClient.cs" t="Include" />
+          <e p="LocalConnections.cs" t="Include" />
+          <e p="LogFilter.cs" t="Include" />
+          <e p="Messages.cs" t="Include" />
+          <e p="Mirror.asmdef" t="Include" />
+          <e p="NetworkBehaviour.cs" t="Include" />
+          <e p="NetworkClient.cs" t="Include" />
+          <e p="NetworkConnection.cs" t="Include" />
+          <e p="NetworkIdentity.cs" t="Include" />
+          <e p="NetworkManager.cs" t="Include" />
+          <e p="NetworkManagerHUD.cs" t="Include" />
+          <e p="NetworkProximityChecker.cs" t="Include" />
+          <e p="NetworkReader.cs" t="Include" />
+          <e p="NetworkServer.cs" t="Include" />
+          <e p="NetworkStartPosition.cs" t="Include" />
+          <e p="NetworkTime.cs" t="Include" />
+          <e p="NetworkWriter.cs" t="Include" />
+          <e p="SyncList.cs" t="Include" />
+          <e p="SyncObject.cs" t="Include" />
+          <e p="Transport" t="Include">
+            <e p="ITransport.cs" t="Include" />
+            <e p="LLAPITransport.cs" t="Include" />
+            <e p="TelepathyTransport.cs" t="Include" />
+          </e>
+          <e p="UNetwork.cs" t="Include" />
+        </e>
+        <e p="Tests" t="Include">
+          <e p="ExponentialMovingAverageTest.cs" t="Include" />
+          <e p="Mirror.Tests.asmdef" t="Include" />
+          <e p="NetworkWriterTest.cs" t="Include" />
+          <e p="SyncListTest.cs" t="Include" />
+          <e p="UtilsTest.cs" t="Include" />
+        </e>
+        <e p="Weaver" t="Include">
+          <e p="CompilationFinishedHook.cs" t="Include" />
+          <e p="Extensions.cs" t="Include" />
+          <e p="Helpers.cs" t="Include" />
+          <e p="Mirror.Weaver.asmdef" t="Include" />
+          <e p="Processors" t="Include">
+            <e p="CommandProcessor.cs" t="Include" />
+            <e p="MessageClassProcessor.cs" t="Include" />
+            <e p="MonoBehaviourProcessor.cs" t="Include" />
+            <e p="NetworkBehaviourProcessor.cs" t="Include" />
+            <e p="RpcProcessor.cs" t="Include" />
+            <e p="SyncEventProcessor.cs" t="Include" />
+            <e p="SyncListProcessor.cs" t="Include" />
+            <e p="SyncListStructProcessor.cs" t="Include" />
+            <e p="SyncObjectProcessor.cs" t="Include" />
+            <e p="SyncVarProcessor.cs" t="Include" />
+            <e p="TargetRpcProcessor.cs" t="Include" />
+          </e>
+          <e p="Program.cs" t="Include" />
+          <e p="Resolvers.cs" t="Include" />
+          <e p="Weaver.cs" t="Include" />
+        </e>
+      </e>
+      <e p="GGJ2019MirrorGroove1.sln" t="IncludeFlat" />
+      <e p="Library" t="ExcludeRecursive" />
+      <e p="Mirror.csproj" t="IncludeRecursive" />
+      <e p="Mirror.Tests.csproj" t="IncludeRecursive" />
+      <e p="Mirror.Weaver.csproj" t="IncludeRecursive" />
+      <e p="obj" t="ExcludeRecursive" />
+      <e p="packages" t="ExcludeRecursive" />
+      <e p="Temp" t="ExcludeRecursive">
+        <e p="bin" t="ExcludeRecursive" />
+      </e>
+    </e>
+  </component>
+</project>

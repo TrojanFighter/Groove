@@ -6,9 +6,5 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/GrooveExamples/Scenes/GrooveExample.unity
+    path: Assets/GrooveExample/Scenes/GrooveExample.unity
     guid: 5a973d242787ba640b375e8086631f8e
-  - enabled: 0
-    path: Assets/Example/EchoTest.unity
-    guid: a0cb60186dd4a4975b26b576c9845c56
-  m_configObjects: {}
