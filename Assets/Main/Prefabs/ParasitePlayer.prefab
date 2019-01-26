@@ -24,11 +24,11 @@ GameObject:
   - component: {fileID: 23720103863125180}
   - component: {fileID: 143850938540474434}
   - component: {fileID: 114087036979672668}
-  - component: {fileID: 114064353879780142}
-  - component: {fileID: 114183174241590376}
   - component: {fileID: 114670082816626556}
+  - component: {fileID: 114865196973791906}
+  - component: {fileID: 114139340194424386}
   m_Layer: 0
-  m_Name: Player
+  m_Name: ParasitePlayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -100,21 +100,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &114064353879780142
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1395911440645076}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd349edadb220994fbcf4e82b462f80c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncInterval: 0.1
-  Id: 
-  Health: 100
-  ComponentsToDisableOnRemote: []
 --- !u!114 &114087036979672668
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -130,7 +115,7 @@ MonoBehaviour:
   m_ServerOnly: 0
   m_LocalPlayerAuthority: 1
   m_AssetId: f3bee6c605e6759469bfbc2e838d2432
---- !u!114 &114183174241590376
+--- !u!114 &114139340194424386
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -138,11 +123,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1395911440645076}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c4e63df252dfdd1418fa63cbe6fc5914, type: 3}
+  m_Script: {fileID: 11500000, guid: ce63beaf85fdcc845a1fd8eacf1ec7c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Controller: {fileID: 143850938540474434}
-  Speed: 1
+  syncInterval: 0.1
+  playerId: 0
+  _functionAllowed: 1
+  rewiredSons: []
 --- !u!114 &114670082816626556
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -156,6 +143,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncInterval: 0.1
   compressRotation: 1
+--- !u!114 &114865196973791906
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1395911440645076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb9b30dfccd663a49adbed39aa034fd3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncInterval: 0.1
+  Id: 
+  Health: 100
+  ComponentsToDisableOnRemote: []
 --- !u!143 &143850938540474434
 CharacterController:
   m_ObjectHideFlags: 1
