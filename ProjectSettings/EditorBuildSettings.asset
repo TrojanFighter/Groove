@@ -6,5 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Main/Scenes/ControllerClient.unity
+    guid: 545a2b93f2d58a04caf5f1b2a8ae563a
+  - enabled: 1
     path: Assets/GrooveExample/Scenes/GrooveExample.unity
     guid: 5a973d242787ba640b375e8086631f8e
